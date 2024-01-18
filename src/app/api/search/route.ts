@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ChromaClient } from "chromadb";
 import { OpenAIEmbeddingFunction } from "chromadb";
-export const revalidate = 3 * 60; // 3 minutes;
+export const revalidate = 4 * 60; // 4 minutes;
 /*
   model UserEmbedding {
     fid                       String       @id
