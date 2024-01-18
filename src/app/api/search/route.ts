@@ -44,6 +44,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
 
   if (!query) return NextResponse.error();
   const decodedQuery = decodeURIComponent(query);
+
   const { NEXT_PUBLIC_OPENAI_API_KEY, NEXT_PUBLIC_RAILWAY_URL } = process.env;
   const client = new ChromaClient({
     path: NEXT_PUBLIC_RAILWAY_URL,
@@ -57,8 +58,8 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
   });
 
   const results = await embeddingCollection.query({
-    nResults: limit ? parseInt(limit) : 6,
-    queryTexts: [decodedQuery],
+    nResults: limit ? parseInt(limit) : 5,
+    queryTexts: decodedQuery,
   });
 
   let casts = await Promise.all(
