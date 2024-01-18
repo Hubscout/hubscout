@@ -57,7 +57,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
   });
 
   const results = await embeddingCollection.query({
-    nResults: limit ? parseInt(limit) : 7,
+    nResults: limit ? parseInt(limit) : 6,
     queryTexts: [decodedQuery],
   });
 
