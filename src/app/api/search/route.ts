@@ -57,9 +57,26 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
     embeddingFunction: embedder,
   });
 
+  const profilesCollection = await client.getOrCreateCollection({
+    name: process.env.NEXT_PUBLIC_PROFILES_NAME as string,
+    embeddingFunction: embedder,
+  });
+
   const results = await embeddingCollection.query({
     nResults: limit ? parseInt(limit) : 5,
     queryTexts: decodedQuery,
+  });
+
+  const profilesResults = await profilesCollection.query({
+    nResults: limit ? parseInt(limit) : 5,
+    queryTexts: decodedQuery,
+  });
+
+  const profiles = profilesResults.ids[0].map((fid, index) => {
+    return {
+      fid,
+      ...profilesResults.metadatas[0][index],
+    };
   });
 
   let casts = await Promise.all(
@@ -83,5 +100,5 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
 
   // First try to find users by fname
 
-  return NextResponse.json({ casts });
+  return NextResponse.json({ casts, profiles });
 }
