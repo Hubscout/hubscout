@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ChromaClient } from "chromadb";
 import { OpenAIEmbeddingFunction } from "chromadb";
-import { PrismaClient } from "@prisma/client";
+export const revalidate = 3 * 60; // 3 minutes;
 /*
   model UserEmbedding {
     fid                       String       @id
