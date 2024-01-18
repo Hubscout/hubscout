@@ -53,7 +53,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
     openai_api_key: NEXT_PUBLIC_OPENAI_API_KEY as string,
   });
   const embeddingCollection = await client.getOrCreateCollection({
-    name: "farcaster_search",
+    name: process.env.NEXT_PUBLIC_COLLECTION_NAME as string,
     embeddingFunction: embedder,
   });
 
