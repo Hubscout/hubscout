@@ -9,7 +9,6 @@ export default function Home() {
     query ? `/api/search?query=${query}` : null,
     fetcher
   );
-  console.log(data);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen flex-1">

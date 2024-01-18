@@ -37,7 +37,7 @@ const getUserInfo = async (fid: string) => {
 
 export async function GET(request: NextRequest, { params }: { params: any }) {
   const searchParams = request.nextUrl.searchParams;
-  console.log(searchParams);
+
   const query = searchParams.get("query");
 
   const limit = searchParams.get("limit");
@@ -82,9 +82,9 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
   let casts = await Promise.all(
     await results.ids[0].map(async (id: any, index) => {
       let userInfo = {};
-      console.log(results?.metadatas?.[0]);
+
       const userInfoFid = results?.metadatas?.[0]?.[index]?.fid?.toString();
-      console.log(userInfoFid);
+
       if (userInfoFid) {
         userInfo = await getUserInfo(userInfoFid);
       }
@@ -96,7 +96,6 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
       };
     })
   );
-  console.log(casts);
 
   // First try to find users by fname
 
