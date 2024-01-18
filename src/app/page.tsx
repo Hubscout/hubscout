@@ -12,6 +12,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen flex-1">
+      <h1>Search for something and casts will be recommended!</h1>
       <input
         className="p-2 m-2 border border-gray-300 rounded-md text-black"
         type="text"
