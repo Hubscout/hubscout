@@ -2,11 +2,16 @@ import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { type CastWithPossibleParent } from "@/components/Cast";
 import { neynar } from "@/lib/neynar";
 
-export async function fetchCastResults(query: string): Promise<CastWithPossibleParent[]> {
+export async function fetchCastResults(
+  query: string
+): Promise<CastWithPossibleParent[]> {
   // define the collection for casts
   const collection = await client.getCollection({ embeddingFunction, name });
   // grab the results for the search
-  const results = await collection.query({ nResults, queryTexts: [decodeURIComponent(query)] });
+  const results = await collection.query({
+    nResults,
+    queryTexts: [decodeURIComponent(query)],
+  });
   // grab the casts + their replies from the hashes
   return await Promise.all(results.ids?.[0].map(_fetchResultForHash));
 }
@@ -21,8 +26,10 @@ async function _fetchResultForHash(hash_partial: string) {
   const threadHash = cast?.threadHash;
 
   // if there's a parent_hash, grab the parent
-  if (threadHash !== cast.hash) {
-    cast.parent = await neynar.lookUpCastByHash(threadHash).then((r) => r.result?.cast ?? undefined);
+  if (cast && cast.hash && threadHash !== cast.hash) {
+    cast.parent = await neynar
+      .lookUpCastByHash(threadHash)
+      .then((r) => r.result?.cast ?? undefined);
   }
 
   return cast;
