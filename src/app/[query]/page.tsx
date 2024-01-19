@@ -13,9 +13,11 @@ export default async function Page({ params }: PageProps) {
       <div className="w-full col gap-2" style={{ maxWidth: 720 }}>
         <Title />
         <SearchBar initValue={params.query} />
-        {casts.map((c, i) => (
-          <Cast key={i + c.hash} {...c} />
-        ))}
+        {casts
+          ? casts
+              .filter((cast) => cast && cast.hash)
+              .map((c, i) => <Cast key={i + c.hash} {...c} />)
+          : null}
       </div>
     </div>
   );
