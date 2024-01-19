@@ -96,6 +96,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
       };
     })
   );
+  casts = casts.filter((cast) => cast.hash);
 
   // First try to find users by fname
 
