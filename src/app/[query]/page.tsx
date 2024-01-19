@@ -14,10 +14,10 @@ export default async function Page({ params }: PageProps) {
         <Title />
         <SearchBar initValue={params.query} />
         {casts
-          .filter((cast) => cast.hash)
-          .map((c, i) => (
-            <Cast key={i + c.hash} {...c} />
-          ))}
+          ? casts
+              .filter((cast) => cast && cast.hash)
+              .map((c, i) => <Cast key={i + c.hash} {...c} />)
+          : null}
       </div>
     </div>
   );
