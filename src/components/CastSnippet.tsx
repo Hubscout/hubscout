@@ -36,13 +36,13 @@ export function CastSnippet({
         <span className="text-sm font-medium font-slate-700 opacity-75">{text}</span>
         <div />
         <div className="row text-sm gap-4 opacity-50 font-medium text-slate-700">
-          <div className="row-c-c gap-1">
+          <div className="svg-small row-c-c gap-1">
             {like} {numLikes}
           </div>
-          <div className="row-c-c gap-1">
+          <div className="svg-small row-c-c gap-1">
             {recast} {numRecasts}
           </div>
-          <div className="row-c-c gap-1">
+          <div className="svg-small row-c-c gap-1">
             {reply} {numReplies}
           </div>
         </div>
