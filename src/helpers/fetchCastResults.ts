@@ -2,9 +2,7 @@ import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { type CastWithPossibleParent } from "@/components/Cast";
 import { neynar } from "@/lib/neynar";
 
-export async function fetchCastResults(
-  query: string
-): Promise<CastWithPossibleParent[]> {
+export async function fetchCastResults(query: string): Promise<CastWithPossibleParent[]> {
   // define the collection for casts
   const collection = await client.getCollection({ embeddingFunction, name });
   // grab the results for the search
@@ -13,7 +11,16 @@ export async function fetchCastResults(
     queryTexts: [decodeURIComponent(query)],
   });
   // grab the casts + their replies from the hashes
-  return await Promise.all(results.ids?.[0].map(_fetchResultForHash));
+  const hash_results = results.ids?.[0] ?? [];
+
+  // if there are no results, return an empty array
+  if (hash_results.length === 0) return [];
+
+  // fetch the results
+  const cast_results = await Promise.all(hash_results.map(_fetchResultForHash));
+
+  // return the results
+  return cast_results.filter((f) => f !== null) as CastWithPossibleParent[];
 }
 
 async function _fetchResultForHash(hash_partial: string) {
@@ -21,17 +28,21 @@ async function _fetchResultForHash(hash_partial: string) {
   const hash = `0x${hash_partial}`;
 
   // grab the cast in question
-  const { result } = await neynar.lookUpCastByHash(hash);
-  const cast: CastWithPossibleParent = result?.cast ?? null;
+  const neynarResult = await neynar.lookUpCastByHash(hash);
+  const cast: CastWithPossibleParent = neynarResult?.result?.cast ?? null;
+
+  // if there's no cast, return null
+  if (!cast) return null;
+
+  // grab the thread hash
   const threadHash = cast?.threadHash;
 
   // if there's a parent_hash, grab the parent
-  if (cast && cast.hash && threadHash !== cast.hash) {
-    cast.parent = await neynar
-      .lookUpCastByHash(threadHash)
-      .then((r) => r.result?.cast ?? undefined);
+  if (cast?.hash && threadHash !== cast?.hash) {
+    cast.parent = await neynar.lookUpCastByHash(threadHash).then((r) => r.result?.cast ?? undefined);
   }
 
+  // return the cast
   return cast;
 }
 
