@@ -18,11 +18,11 @@ async function _fetchResultForHash(hash_partial: string) {
   // grab the cast in question
   const { result } = await neynar.lookUpCastByHash(hash);
   const cast: CastWithPossibleParent = result?.cast ?? null;
-  const parentHash = cast?.parentHash ?? null;
+  const threadHash = cast?.threadHash;
 
   // if there's a parent_hash, grab the parent
-  if (parentHash) {
-    cast.parent = await neynar.lookUpCastByHash(parentHash).then((r) => r.result?.cast ?? undefined);
+  if (threadHash !== cast.hash) {
+    cast.parent = await neynar.lookUpCastByHash(threadHash).then((r) => r.result?.cast ?? undefined);
   }
 
   return cast;
