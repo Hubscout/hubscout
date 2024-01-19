@@ -81,6 +81,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
 
   let casts = await Promise.all(
     await results.ids[0].map(async (id: any, index) => {
+      if (!id) return null;
       let userInfo = {};
 
       const userInfoFid = results?.metadatas?.[0]?.[index]?.fid?.toString();
@@ -96,7 +97,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
       };
     })
   );
-  casts = casts.filter((cast) => cast.hash);
+  casts = casts.filter((cast) => cast && cast.hash);
 
   // First try to find users by fname
 
