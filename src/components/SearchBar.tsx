@@ -20,9 +20,9 @@ export function SearchBar({ initValue }: SearchBarProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Search for something semantically..."
-        className="bg-slate-50 hasText:bg-white placeholder:text-slate-400 placeholder:font-medium border-2 border-slate-50 text-sm font-medium text-slate-800 pr-4 pl-4 focus:bg-white outline-none w-full h-10 rounded-full"
+        className="bg-slate-100 hasText:bg-white placeholder:text-slate-400 placeholder:font-medium border-2 border-slate-100 text-sm font-medium text-slate-800 pr-4 pl-4 focus:bg-white outline-none w-full h-10 rounded-full"
       />
-      <div className="opacity-50 col w-full border-2 border-transparent">
+      <div className="opacity-75 col w-full border-2 border-transparent">
         <div className="h-2" />
         <span className="pl-4 text-xs font-semibold uppercase text-slate-400">Tap enter to search</span>
         <div className="h-1" />
