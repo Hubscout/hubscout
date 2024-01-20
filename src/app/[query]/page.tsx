@@ -7,7 +7,7 @@ import { Metadata } from "next";
 export const revalidate = 60 * 5; // 5 minutes
 
 export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
-  const query = (params.query as string) ?? "Farcaster Semantic Search Engine";
+  const query = (params.query as string) ?? "Hubscout";
   const title = decodeURIComponent(query);
 
   return {
