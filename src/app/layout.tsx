@@ -1,6 +1,7 @@
 import { WithProgressBar } from "@/components/WithProgressBar";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import "@/styles/index.scss";
 
 export const metadata: Metadata = {
@@ -10,11 +11,16 @@ export const metadata: Metadata = {
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body className={inter.className}>
         <WithProgressBar>{children}</WithProgressBar>
+        <Analytics />
       </body>
     </html>
   );
