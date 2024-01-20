@@ -12,6 +12,7 @@
     "@neynar/nodejs-sdk": "^1.7.0",
     "@prisma/client": "^5.8.1",
     "chromadb": "^1.7.3",
+    "classnames": "^2.5.1",
     "dayjs": "^1.11.10",
     "next": "14.0.4",
     "openai": "^4.24.7",

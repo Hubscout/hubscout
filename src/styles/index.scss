@@ -3,3 +3,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.svg-large svg {
+  height: 26px;
+  width: 26px;
+}
+
+.svg-small svg {
+  height: 15px;
+  width: 15px;
+}

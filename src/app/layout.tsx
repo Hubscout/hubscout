@@ -5,8 +5,8 @@ import "@/styles/index.scss";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Farcaster Semantic Search Engine",
-  description: "Embeddings + Search for the Farcaster Protocol",
+  title: "Hubscout",
+  description: "Farcaster Semantic Search Engine",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
