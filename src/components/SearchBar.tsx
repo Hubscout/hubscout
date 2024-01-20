@@ -1,10 +1,10 @@
 "use client";
 
-import { arrow } from "@/svg";
+import { useRouter } from "next13-progressbar";
 import classNames from "classnames";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { arrow } from "@/svg";
+import { inter } from "@/app/layout";
 
 export function SearchBar({ initValue }: SearchBarProps) {
   const [value, setValue] = useState<string>(decodeURIComponent(initValue));
