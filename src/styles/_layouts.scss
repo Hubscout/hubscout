@@ -1,3 +1,11 @@
+// place in main styles file or import
+
+// examples:
+// - ".row-fs-c" is a row with flex-start on main axis and center on secondary axis
+// - ".col-sb-sb" is a column with space-between on main axis and secondary axis
+// - ".row-sa-fe" is a row with space-around on main axis and flex-end on secondary axis
+// - ".col": is a column with flex-start on main axis and secondary axis
+
 @mixin flex-layout-generator() {
   $directions: (
     "row": row,
