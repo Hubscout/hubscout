@@ -114,7 +114,6 @@ const Contains: React.FC<ContainsProps> = ({ query, time, contains }) => {
                   setPhrase(e.target.value);
                   if (e.key === "Enter") {
                     handleSubmit(e);
-
                     setPhrase("");
                   }
                 }}
