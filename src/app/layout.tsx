@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "@/styles/index.scss";
+import posthog from "posthog-js";
 
 export const metadata: Metadata = {
   title: "Hubscout",
@@ -16,6 +17,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  posthog.init(process.env.POSTHOG_URL as string, {
+    api_host: "https://us.posthog.com",
+  });
+
   return (
     <html lang="en">
       <body className={inter.className}>

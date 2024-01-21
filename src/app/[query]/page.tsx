@@ -4,6 +4,7 @@ import { Title } from "@/components/Title";
 import { Cast } from "@/components/Cast";
 import Filter from "@/components/Filter";
 import Contains from "@/components/Contains";
+import posthog from "posthog-js";
 
 export const revalidate = 60 * 5; // 5 minutes
 
@@ -12,6 +13,11 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   const time = searchParams?.time as "day" | "week" | "month" | "year" | null;
   const contains = searchParams?.contains as string | null;
+  posthog.capture("query", {
+    query,
+    time,
+    contains,
+  });
   const casts = await fetchCastResults(
     encodeURIComponent(query),
     time,
