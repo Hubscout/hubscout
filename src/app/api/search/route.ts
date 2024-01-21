@@ -50,18 +50,18 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
 
     const { NEXT_PUBLIC_OPENAI_API_KEY, NEXT_PUBLIC_RAILWAY_URL } = process.env;
     const client = new ChromaClient({
-      path: NEXT_PUBLIC_RAILWAY_URL,
+      path: process.env.RAILWAY_URL,
     });
     const embedder = new OpenAIEmbeddingFunction({
-      openai_api_key: NEXT_PUBLIC_OPENAI_API_KEY as string,
+      openai_api_key: process.env.OPENAI_API_KEY as string,
     });
     const embeddingCollection = await client.getCollection({
       embeddingFunction: embedder,
-      name: "farcaster_search_v2",
+      name: process.env.COLLECTION_NAME as string,
     });
 
     const profilesCollection = await client.getOrCreateCollection({
-      name: process.env.NEXT_PUBLIC_PROFILES_NAME as string,
+      name: process.env.PROFILES_NAME as string,
       embeddingFunction: embedder,
     });
 
