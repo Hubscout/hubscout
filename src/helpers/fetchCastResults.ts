@@ -1,31 +1,85 @@
 import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { type CastWithPossibleParent } from "@/components/Cast";
 import { neynar } from "@/lib/neynar";
+import { subDays, subWeeks, subMonths, subYears } from "date-fns";
+import { IncludeEnum } from "chromadb";
 
-export async function fetchCastResults(query: string): Promise<CastWithPossibleParent[]> {
-  // define the collection for casts
-  const collection = await client.getCollection({ embeddingFunction, name });
-  // grab the results for the search
-  const results = await collection.query({
-    nResults,
-    queryTexts: [decodeURIComponent(query)],
-  });
-  // grab the casts + their replies from the hashes
-  const hash_results = results.ids?.[0] ?? [];
+export async function fetchCastResults(
+  query: string,
+  timeQuery?: "day" | "week" | "month" | "year" | null,
+  contains?: string | null
+): Promise<CastWithPossibleParent[]> {
+  try {
+    // define the collection for casts
+    const collection = await client.getCollection({
+      embeddingFunction,
+      name: "farcaster_search_v2",
+    });
 
-  // if there are no results, return an empty array
-  if (hash_results.length === 0) return [];
+    // Determine the start timestamp based on the time query
+    let startTime: Date | null = null;
+    if (timeQuery) {
+      const now = new Date();
+      switch (timeQuery) {
+        case "day":
+          startTime = subDays(now, 1);
+          break;
+        case "week":
+          startTime = subWeeks(now, 1);
+          break;
+        case "month":
+          startTime = subMonths(now, 1);
+          break;
+        case "year":
+          startTime = subYears(now, 1);
+          break;
+        default:
+          startTime = null;
+      }
+    }
 
-  // fetch the results
-  const cast_results = await Promise.all(hash_results.map(_fetchResultForHash));
+    // grab the results for the search
+    const results = await collection.query({
+      nResults,
+      queryTexts: [decodeURIComponent(query)],
+      where: startTime
+        ? // timestamp: { $gte: startTime.getTime() },
+          // username: { $eq: "dwr" },
+          {
+            timestamp: {
+              $gt: startTime.getTime(),
+            },
+          }
+        : undefined,
+      whereDocument: contains
+        ? {
+            $contains: contains,
+          }
+        : undefined,
+    });
 
-  // return the results
-  return cast_results.filter((f) => f !== null) as CastWithPossibleParent[];
+    // grab the casts + their replies from the hashes
+    const hash_results = results.ids?.[0] ?? [];
+
+    // if there are no results, return an empty array
+    if (hash_results.length === 0) return [];
+
+    // fetch the results
+    const cast_results = await Promise.all(
+      hash_results.map(_fetchResultForHash)
+    );
+
+    // return the results
+    return cast_results.filter((f) => f !== null) as CastWithPossibleParent[];
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
 }
 
 async function _fetchResultForHash(hash_partial: string) {
   // reconstruct the hash
-  const hash = `0x${hash_partial}`;
+  const hash = `${hash_partial}`;
 
   // grab the cast in question
   const neynarResult = await neynar.lookUpCastByHash(hash);
@@ -39,12 +93,14 @@ async function _fetchResultForHash(hash_partial: string) {
 
   // if there's a parent_hash, grab the parent
   if (cast?.hash && threadHash !== cast?.hash) {
-    cast.parent = await neynar.lookUpCastByHash(threadHash).then((r) => r.result?.cast ?? undefined);
+    cast.parent = await neynar
+      .lookUpCastByHash(threadHash)
+      .then((r) => r.result?.cast ?? undefined);
   }
 
   // return the cast
   return cast;
 }
 
-const name = "farcaster_search"; // farcaster_embedding_profiles;
+const name = "farcaster_search_v2"; // farcaster_embedding_profiles;
 const nResults = 25;

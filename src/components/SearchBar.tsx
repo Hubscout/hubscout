@@ -4,14 +4,19 @@ import { useRouter } from "next13-progressbar";
 import classNames from "classnames";
 import { useState } from "react";
 import { arrow } from "@/svg";
+import { constructHref } from "./Filter";
 
-export function SearchBar({ initValue }: SearchBarProps) {
+export function SearchBar({ initValue, time, contains }: SearchBarProps) {
   const [value, setValue] = useState<string>(decodeURIComponent(initValue));
   const router = useRouter();
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function onSubmit(
+    e:
+      | React.FormEvent<HTMLFormElement>
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     e.preventDefault();
-    router.push(`/${encodeURIComponent(value)}`);
+    router.push(`/${constructHref(value, time, contains)}}`);
   }
 
   return (
@@ -41,4 +46,6 @@ export function SearchBar({ initValue }: SearchBarProps) {
 
 export interface SearchBarProps {
   initValue: string;
+  time?: string | null;
+  contains?: string | null;
 }
