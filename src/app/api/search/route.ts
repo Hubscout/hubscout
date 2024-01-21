@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ChromaClient } from "chromadb";
 import { OpenAIEmbeddingFunction } from "chromadb";
+import posthog from "posthog-js";
 export const revalidate = 4 * 60; // 4 minutes;
 /*
   model UserEmbedding {
@@ -46,6 +47,11 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
     const time = searchParams.get("time");
 
     if (!query) return NextResponse.error();
+    posthog.capture("api_query", {
+      query,
+      time,
+      limit,
+    });
     const decodedQuery = decodeURIComponent(query);
 
     const { NEXT_PUBLIC_OPENAI_API_KEY, NEXT_PUBLIC_RAILWAY_URL } = process.env;
