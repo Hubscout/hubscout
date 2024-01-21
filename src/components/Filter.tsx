@@ -1,4 +1,5 @@
 "use client";
+import classNames from "classnames";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 
@@ -76,7 +77,7 @@ const Filter: React.FC<FilterProps> = ({ query, time, contains }) => {
       <div>
         <button
           type="button"
-          className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex justify-center w-full rounded-full border-2 border-slate-100 px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-indigo-500"
           id="options-menu"
           aria-haspopup="true"
           aria-expanded="true"
@@ -101,7 +102,7 @@ const Filter: React.FC<FilterProps> = ({ query, time, contains }) => {
       </div>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+        <div className="absolute mt-2 w-64 border-2 border-slate-100  cursor-pointer hover:border-slate-200  p-3 rounded-xl z-50 bg-slate-50 ">
           <div
             className="py-1"
             role="menu"
@@ -112,7 +113,7 @@ const Filter: React.FC<FilterProps> = ({ query, time, contains }) => {
               <Link
                 key={option.value ?? "any"}
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
                 href={constructHref(query, option.value, contains as any)}
               >
                 {option.label}
