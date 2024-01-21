@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@farcaster/hub-nodejs": "^0.10.20",
     "@neynar/nodejs-sdk": "^1.7.0",
     "@prisma/client": "^5.8.1",
     "chromadb": "^1.7.3",

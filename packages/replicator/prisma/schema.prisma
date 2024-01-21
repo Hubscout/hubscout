@@ -1,0 +1,250 @@
+model User {
+    // identifiers
+    fid                Int             @id @unique @default(autoincrement())
+    username           String          @unique
+    // metadata
+    pfp_url            String
+    display_name       String
+    link_url           String
+    place_description  String
+    place_id           String
+    // timestamps
+    timestamp          Int
+    created_at         DateTime        @default(now())
+    updated_at         DateTime        @updatedAt
+    // primary relations
+    casts              Cast[]
+    quotes             QuoteCast[]     @relation(name: "UserQuoteCast")
+    quoted_by          QuoteCast[]     @relation(name: "TargetUserQuoteCast")
+    likes              Like[]          @relation(name: "UserLike")
+    liked_by           Like[]          @relation(name: "TargetUserLike")
+    recasts            Recast[]        @relation(name: "UserRecast")
+    recasted_by        Recast[]        @relation(name: "TargetUserRecast")
+    mentioned_in       Cast[]          @relation("MentionedUsers")
+    eth_addresses      Address[]
+    following          Follow[]        @relation(name: "UserFollow")
+    followers          Follow[]        @relation(name: "TargetUserFollow")
+    channels_led       Channel[]
+    alt_usernames      UsernameProof[]
+    embeds             Embed[]         @relation("EmbedCastUser")
+    // secondary relations
+    all_reactions_sent Reaction[]      @relation(name: "UserAltReaction")
+    all_reactions_rec  Reaction[]      @relation(name: "TargetUserAltReaction")
+    all_links_sent     Link[]          @relation(name: "UserAltLink")
+    all_links_rec      Link[]          @relation(name: "TargetUserAltLink")
+    eth_verifications  Verification[]
+}
+
+model Channel {
+    // identifiers
+    id                String   @id @unique
+    url               String   @unique
+    // metadata
+    name              String
+    description       String
+    image_url         String
+    lead_fid          Int
+    // timestamps
+    created_timestamp Int
+    created_at        DateTime @default(now())
+    updated_at        DateTime @updatedAt
+    // relations
+    lead              User     @relation(fields: [lead_fid], references: [fid])
+    casts             Cast[]
+}
+
+model Embed {
+    // identifiers
+    url       String @id @unique
+    casts_in  Cast[] @relation("EmbedCasts")
+    casted_by User[] @relation("EmbedCastUser")
+}
+
+model Cast {
+    // identifiers
+    hash            String   @id @unique
+    parent_hash     String?
+    thread_hash     String?
+    parent_url      String?
+    channel_id      String?
+    // metadata
+    fid             Int
+    text            String
+    network         String
+    // timestamps
+    timestamp       Int
+    created_at      DateTime @default(now())
+    updated_at      DateTime @updatedAt
+    // relations
+    channel         Channel? @relation(fields: [channel_id], references: [id])
+    user            User     @relation(fields: [fid], references: [fid])
+    users_mentioned User[]   @relation("MentionedUsers")
+    parent          Cast?    @relation("ChildCasts", fields: [parent_hash], references: [hash])
+    children        Cast[]   @relation("ChildCasts")
+    thread_parent   Cast?    @relation("ThreadCasts", fields: [thread_hash], references: [hash])
+    thread_children Cast[]   @relation("ThreadCasts")
+    embeds          Embed[]  @relation("EmbedCasts")
+}
+
+model Like {
+    // identifiers
+    hash       String @id @unique
+    // metadata
+    fid        Int
+    target_fid Int
+
+    // timestamps
+    timestamp  Int
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    // relations
+    user       User     @relation(name: "UserLike", fields: [fid], references: [fid])
+    target     User     @relation(name: "TargetUserLike", fields: [target_fid], references: [fid])
+}
+
+model Recast {
+    // identifiers
+    hash       String   @id @unique
+    // metadata
+    fid        Int
+    target_fid Int
+    // timestamps
+    timestamp  Int
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    // relations
+    user       User     @relation(name: "UserRecast", fields: [fid], references: [fid])
+    target     User     @relation(name: "TargetUserRecast", fields: [target_fid], references: [fid])
+}
+
+model QuoteCast {
+    // identifiers
+    hash       String   @id @unique
+    // metadata
+    fid        Int
+    target_fid Int
+    text       String
+    // timestamps
+    timestamp  Int
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    // relations
+    user       User     @relation(name: "UserQuoteCast", fields: [fid], references: [fid])
+    target     User     @relation(name: "TargetUserQuoteCast", fields: [target_fid], references: [fid])
+}
+
+model Follow {
+    // identifiers
+    hash       String   @id @unique
+    // metadata
+    fid        Int
+    target_fid Int
+    network    String
+    // timestamps
+    timestamp  Int
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    // relations
+    user       User     @relation(name: "UserFollow", fields: [fid], references: [fid])
+    target     User     @relation(name: "TargetUserFollow", fields: [target_fid], references: [fid])
+}
+
+model Address {
+    // identifiers
+    hash       String   @id @unique
+    address    String   @unique
+    chain      String
+    // metadata
+    fid        Int
+    // timestamps
+    timestamp  Int
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    // relations
+    user       User     @relation(fields: [fid], references: [fid])
+}
+
+model UsernameProof {
+    // identifiers
+    hash       String   @id @unique
+    name       String   @unique
+    // metadata
+    fid        Int
+    // timestamps
+    timestamp  Int
+    signature  String
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    // relations
+    user       User     @relation(fields: [fid], references: [fid])
+}
+
+model Reaction {
+    // identifiers
+    hash             String   @id @unique
+    hash_scheme      String   @unique
+    signature        String   @unique
+    signature_scheme String   @unique
+    signer           String
+    // metadata
+    fid              Int
+    target_fid       Int
+    type             String
+    // timestamps
+    timestamp        Int
+    created_at       DateTime @default(now())
+    updated_at       DateTime @updatedAt
+    // relations
+    user             User     @relation(name: "UserAltReaction", fields: [fid], references: [fid])
+    target           User     @relation(name: "TargetUserAltReaction", fields: [target_fid], references: [fid])
+}
+
+model Link {
+    // identifiers
+    hash             String   @id @unique
+    hash_scheme      String   @unique
+    signature        String   @unique
+    signature_scheme String   @unique
+    signer           String
+    // metadata
+    fid              Int
+    target_fid       Int
+    type             String
+    network          String
+    // timestamps
+    timestamp        Int
+    created_at       DateTime @default(now())
+    updated_at       DateTime @updatedAt
+    // relations
+    user             User     @relation(name: "UserAltLink", fields: [fid], references: [fid])
+    target           User     @relation(name: "TargetUserAltLink", fields: [target_fid], references: [fid])
+}
+
+model Verification {
+    // identifiers
+    hash             String   @id @unique
+    address          String   @unique
+    hash_scheme      String   @unique
+    signature        String   @unique
+    signature_scheme String   @unique
+    eth_signature    String   @unique
+    block_hash       String   @unique
+    signer           String
+    // metadata 
+    fid              Int
+    network          String
+    // timestamps
+    timestamp        Int
+    created_at       DateTime @default(now())
+    updated_at       DateTime @updatedAt
+    // relations
+    user             User     @relation(fields: [fid], references: [fid])
+}
+
+model Subscriber {
+    id                 Int       @id @unique @default(autoincrement())
+    last_event_indexed BigInt
+    last_started_at    DateTime  @default(now())
+    last_stopped_at    DateTime?
+    last_error_at      DateTime?
+}
