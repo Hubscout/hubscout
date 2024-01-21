@@ -16,7 +16,7 @@ export function SearchBar({ initValue, time, contains }: SearchBarProps) {
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     e.preventDefault();
-    router.push(`/${constructHref(value, time, contains)}}`);
+    router.push(`${constructHref(value, time, contains)}`);
   }
 
   return (
