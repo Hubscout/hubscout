@@ -2,7 +2,7 @@ import { fetchCastResults } from "@/helpers/fetchCastResults";
 import { NextRequest, NextResponse } from "next/server";
 
 export const revalidate = 60 * 5; // 5 minutes
-
+export const maxDuration = 300;
 export async function GET(
   { headers }: NextRequest,
   {
