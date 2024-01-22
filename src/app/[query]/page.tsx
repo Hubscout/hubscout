@@ -11,12 +11,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   let query = params.query;
 
   const time = searchParams?.time as "day" | "week" | "month" | "year" | null;
-  const contains = searchParams?.contains as string | null;
-  const casts = await fetchCastResults(
-    encodeURIComponent(query),
-    time,
-    contains
-  );
+  const casts = await fetchCastResults(encodeURIComponent(query), time);
   query = decodeURIComponent(query).split("?")[0];
 
   return (
@@ -26,9 +21,9 @@ export default async function Page({ params, searchParams }: PageProps) {
     >
       <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
         <Title />
-        <SearchBar initValue={query} time={time} contains={contains} />
+        <SearchBar initValue={query} time={time} />
         <div className="flex w-full space-x-3">
-          <Filter query={params.query} time={time} contains={contains} />
+          <Filter query={params.query} time={time} />
           {/* <Contains query={params.query} contains={contains} time={time} /> */}
         </div>
 

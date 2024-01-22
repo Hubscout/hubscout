@@ -17,13 +17,12 @@ export async function GET(
 ) {
   const token = headers.get("Authorization");
   const time = params.time ?? null;
-  const contains = params.contains ?? null;
 
   if (token !== "ballerkevin")
     return NextResponse.json("invalid token sers", { status: 420 });
 
   try {
-    const casts = await fetchCastResults(params.query, time, contains);
+    const casts = await fetchCastResults(params.query, time);
     return NextResponse.json({ status: "ok", casts });
   } catch (e) {
     return NextResponse.json("Bad request", { status: 400 });

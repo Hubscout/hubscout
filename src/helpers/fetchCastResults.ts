@@ -6,8 +6,7 @@ import { IncludeEnum } from "chromadb";
 
 export async function fetchCastResults(
   query: string,
-  timeQuery?: "day" | "week" | "month" | "year" | null,
-  contains?: string | null
+  timeQuery?: "day" | "week" | "month" | "year" | null
 ): Promise<CastWithPossibleParent[]> {
   try {
     // define the collection for casts
@@ -49,11 +48,6 @@ export async function fetchCastResults(
             timestamp: {
               $gt: startTime.getTime(),
             },
-          }
-        : undefined,
-      whereDocument: contains
-        ? {
-            $contains: contains,
           }
         : undefined,
     });
