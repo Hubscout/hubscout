@@ -11,7 +11,6 @@ export async function GET(
     params: {
       query: string;
       time?: "day" | "week" | "month" | "year";
-      contains?: string;
     };
   }
 ) {
