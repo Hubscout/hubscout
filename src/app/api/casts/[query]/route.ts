@@ -24,6 +24,7 @@ export async function GET(
     const casts = await fetchCastResults(params.query, time);
     return NextResponse.json({ status: "ok", casts });
   } catch (e) {
+    console.log("error in query", e);
     return NextResponse.json("Bad request", { status: 400 });
   }
 }
