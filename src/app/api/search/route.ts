@@ -37,68 +37,76 @@ const getUserInfo = async (fid: string) => {
 };
 
 export async function GET(request: NextRequest, { params }: { params: any }) {
-  const searchParams = request.nextUrl.searchParams;
+  try {
+    const searchParams = request.nextUrl.searchParams;
 
-  const query = searchParams.get("query");
+    const query = searchParams.get("query");
 
-  const limit = searchParams.get("limit");
+    const limit = searchParams.get("limit");
 
-  if (!query) return NextResponse.error();
-  const decodedQuery = decodeURIComponent(query);
+    const time = searchParams.get("time");
 
-  const { NEXT_PUBLIC_OPENAI_API_KEY, NEXT_PUBLIC_RAILWAY_URL } = process.env;
-  const client = new ChromaClient({
-    path: NEXT_PUBLIC_RAILWAY_URL,
-  });
-  const embedder = new OpenAIEmbeddingFunction({
-    openai_api_key: NEXT_PUBLIC_OPENAI_API_KEY as string,
-  });
-  const embeddingCollection = await client.getOrCreateCollection({
-    name: process.env.NEXT_PUBLIC_COLLECTION_NAME as string,
-    embeddingFunction: embedder,
-  });
+    if (!query) return NextResponse.error();
+    const decodedQuery = decodeURIComponent(query);
 
-  const profilesCollection = await client.getOrCreateCollection({
-    name: process.env.NEXT_PUBLIC_PROFILES_NAME as string,
-    embeddingFunction: embedder,
-  });
+    const { NEXT_PUBLIC_OPENAI_API_KEY, NEXT_PUBLIC_RAILWAY_URL } = process.env;
+    const client = new ChromaClient({
+      path: process.env.RAILWAY_URL,
+    });
+    const embedder = new OpenAIEmbeddingFunction({
+      openai_api_key: process.env.OPENAI_API_KEY as string,
+    });
+    const embeddingCollection = await client.getCollection({
+      embeddingFunction: embedder,
+      name: process.env.COLLECTION_NAME as string,
+    });
 
-  const results = await embeddingCollection.query({
-    nResults: limit ? parseInt(limit) : 5,
-    queryTexts: decodedQuery,
-  });
+    const profilesCollection = await client.getOrCreateCollection({
+      name: process.env.PROFILES_NAME as string,
+      embeddingFunction: embedder,
+    });
 
-  const profilesResults = await profilesCollection.query({
-    nResults: limit ? parseInt(limit) : 5,
-    queryTexts: decodedQuery,
-  });
+    const results = await embeddingCollection.query({
+      nResults: limit ? parseInt(limit) : 5,
+      queryTexts: decodedQuery,
+      where: time ? { timestamp: { $gte: time } } : undefined,
+    });
 
-  const profiles = profilesResults.ids[0].map((fid, index) => {
-    return {
-      fid,
-      ...profilesResults.metadatas[0][index],
-    };
-  });
+    const profilesResults = await profilesCollection.query({
+      nResults: limit ? parseInt(limit) : 5,
+      queryTexts: decodedQuery,
+    });
 
-  let casts = await Promise.all(
-    await results.ids[0].map(async (id: any, index) => {
-      let userInfo = {};
-
-      const userInfoFid = results?.metadatas?.[0]?.[index]?.fid?.toString();
-
-      if (userInfoFid) {
-        userInfo = await getUserInfo(userInfoFid);
-      }
-
+    const profiles = profilesResults.ids[0].map((fid, index) => {
       return {
-        hash: id,
-        cast: results.documents[0][index],
-        ...userInfo,
+        fid,
+        ...profilesResults.metadatas[0][index],
       };
-    })
-  );
+    });
 
-  // First try to find users by fname
+    let casts = await Promise.all(
+      await results.ids[0].map(async (id: any, index) => {
+        let userInfo = {};
 
-  return NextResponse.json({ casts, profiles });
+        const userInfoFid = results?.metadatas?.[0]?.[index]?.fid?.toString();
+
+        if (userInfoFid) {
+          userInfo = await getUserInfo(userInfoFid);
+        }
+
+        return {
+          hash: id,
+          cast: results.documents[0][index],
+          ...userInfo,
+        };
+      })
+    );
+
+    // First try to find users by fname
+
+    return NextResponse.json({ casts, profiles });
+  } catch (e) {
+    console.log(e);
+    return new Response(`${e}`, { status: 500 });
+  }
 }

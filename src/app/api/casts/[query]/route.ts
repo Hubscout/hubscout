@@ -5,15 +5,23 @@ export const revalidate = 60 * 5; // 5 minutes
 export const maxDuration = 300;
 export async function GET(
   { headers }: NextRequest,
-  { params }: { params: { query: string } }
+  {
+    params,
+  }: {
+    params: {
+      query: string;
+      time?: "day" | "week" | "month" | "year";
+    };
+  }
 ) {
   const token = headers.get("Authorization");
+  const time = params.time ?? null;
 
   if (token !== "ballerkevin")
     return NextResponse.json("invalid token sers", { status: 420 });
 
   try {
-    const casts = await fetchCastResults(params.query);
+    const casts = await fetchCastResults(params.query, time);
     return NextResponse.json({ status: "ok", casts });
   } catch (e) {
     return NextResponse.json("Bad request", { status: 400 });
