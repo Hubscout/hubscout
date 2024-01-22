@@ -106,7 +106,7 @@ export async function GET(request: NextRequest, { params }: { params: any }) {
 
     return NextResponse.json({ casts, profiles });
   } catch (e) {
-    console.log(e);
+    console.log("error in search", e);
     return new Response(`${e}`, { status: 500 });
   }
 }

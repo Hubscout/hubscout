@@ -51,6 +51,7 @@ export async function fetchCastResults(
           }
         : undefined,
     });
+    console.log("results", results);
 
     // grab the casts + their replies from the hashes
     const hash_results = results.ids?.[0] ?? [];
@@ -66,7 +67,7 @@ export async function fetchCastResults(
     // return the results
     return cast_results.filter((f) => f !== null) as CastWithPossibleParent[];
   } catch (e) {
-    console.log(e);
+    console.log("error in fetchcast", e);
     return [];
   }
 }
@@ -96,5 +97,4 @@ async function _fetchResultForHash(hash_partial: string) {
   return cast;
 }
 
-const name = "farcaster_search_v2"; // farcaster_embedding_profiles;
 const nResults = 25;
