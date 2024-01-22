@@ -3,7 +3,7 @@ import { type CastWithPossibleParent } from "@/components/Cast";
 import { neynar } from "@/lib/neynar";
 import { subDays, subWeeks, subMonths, subYears } from "date-fns";
 import { IncludeEnum } from "chromadb";
-
+export const maxDuration = 300; // This function can run for a maximum of 5 min
 export async function fetchCastResults(
   query: string,
   timeQuery?: "day" | "week" | "month" | "year" | null
