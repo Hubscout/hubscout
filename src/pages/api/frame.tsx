@@ -139,5 +139,7 @@ export default async function handler(
   `;
     // Correctly creating and returning a NextResponse object with image/png content type
     res.status(200).send(data);
+  } else {
+    res.status(405).send("Method not allowed");
   }
 }
