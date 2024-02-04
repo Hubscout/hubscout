@@ -70,6 +70,7 @@ export default async function handler(
     <meta name="fc:frame:button:1" content="Previous">
                 <meta name="fc:frame:button:2" content="Next">
 */
+    console.log({ cast });
 
     if (!cast) return new Response("No cast found", { status: 404 });
     const svg = await satori(
@@ -120,8 +121,7 @@ export default async function handler(
     );
 
     const pngBuffer = await sharp(Buffer.from(svg)).toFormat("png").toBuffer();
-    const data = `
-    <!DOCTYPE html>
+    const data = `<!DOCTYPE html>
     <html>
     <head>
         <title>Hubscout</title>
@@ -135,10 +135,9 @@ export default async function handler(
           host ?? "https://www.hubscout.xyz"
         }/${encodeURIComponent(inputText)}">
     </head>
-    </html>
-  `;
+    </html>`;
     // Correctly creating and returning a NextResponse object with image/png content type
-    res.status(200).send(data);
+    res.send(data);
   } else {
     res.status(405).send("Method not allowed");
   }
