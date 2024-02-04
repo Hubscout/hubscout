@@ -19,6 +19,7 @@ export default async function Page() {
       />
       <meta property="fc:frame:input:text" content="Search" />
       <meta property="fc:frame:button:1" content="SEARCH" />
+      <meta property="fc:frame:button:1:action" content="post" />
       <meta
         property="fc:frame:post_url"
         content="https://www.hubscout.xyz/api/frame"

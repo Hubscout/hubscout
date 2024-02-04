@@ -62,7 +62,7 @@ export default async function handler(
         <meta property="og:image" content="https://www.hubscout.xyz/api/image?hash=${hash}">
         <meta name="fc:frame" content="vNext">
         <meta name="fc:frame:image" content="https://www.hubscout.xyz/api/image?hash=${hash}">
-        <meta property="fc:frame:button:1" content="Open App">
+        <meta property="fc:frame:button:1" content="Open Hubscout">
         <meta property="fc:frame:button:1:action" content="post_redirect">
         <meta
         property="fc:frame:post_url"
