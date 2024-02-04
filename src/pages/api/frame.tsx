@@ -138,10 +138,7 @@ export default async function handler(
     </head>
     </html>
   `;
-
     // Correctly creating and returning a NextResponse object with image/png content type
-    const response = new NextResponse(pngBuffer);
-    response.headers.set("content-type", "image/png");
-    return response;
+    res.send(data);
   }
 }
