@@ -102,9 +102,9 @@ export default async function handler(
                 style={styles.image}
                 alt="Author's Profile Picture"
               />
-              <h1 style={styles.heading}>{cast.author.fname}</h1>
+              <h1 style={styles.heading}>fname</h1>
             </div>
-            <p style={styles.cast}>{cast.text}</p>
+            <p style={styles.cast as any}>Text</p>
           </div>
         </div>,
         {
