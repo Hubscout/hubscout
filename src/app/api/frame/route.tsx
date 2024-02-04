@@ -11,6 +11,7 @@ import { _fetchResultForHash } from "@/helpers/fetchCastResults";
 import { join } from "path";
 import * as fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 export const revalidate = 0;
 
@@ -23,7 +24,11 @@ export async function POST(req: NextRequest, res: Response) {
     const { buttonIndex, fid, inputText } = body.untrustedData;
     const fontPath = join(process.cwd(), "Roboto-Regular.ttf");
     const fontData = fs.readFileSync(fontPath);
+    const headersList = headers();
 
+    const host = headersList.get("host"); // to get domain
+
+    console.log({ host });
     console.log({ fid, inputText });
     posthog.capture("search_frame", { fid, inputText });
 
@@ -124,9 +129,9 @@ export async function POST(req: NextRequest, res: Response) {
         <meta name="fc:frame:image" content="${pngBuffer}">
         <meta property="fc:frame:button:1" content="Open App">
         <meta property="fc:frame:button:1:action" content="redirect">
-        <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(
-          inputText
-        )}">
+        <meta property="fc:frame:button:1:url" content="${
+          host ?? "https://www.hubscout.xyz"
+        }/${encodeURIComponent(inputText)}">
     </head>
     </html>
   `;

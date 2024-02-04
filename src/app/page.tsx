@@ -2,19 +2,19 @@ import { Suggestions } from "@/components/Suggestions";
 import { SearchBar } from "@/components/SearchBar";
 import { Title } from "@/components/Title";
 import { APIDisclaimer } from "@/components/APIDisclaimer";
-import {
-  Frame,
-  FrameButton,
-  FrameConfig,
-  FrameImage,
-  FrameInput,
-} from "@devcaster/next/frames";
+import { headers } from "next/headers";
 
 export async function generateMetadata({
   params,
 }: {
   params: { match: string; turn: string };
 }) {
+  const headersList = headers();
+
+  const host = headersList.get("host"); // to get domain
+
+  console.log({ host });
+
   return {
     title: "Hubscout",
     description: "Semantic search for Farcaster",
@@ -26,12 +26,10 @@ export async function generateMetadata({
       "fc:frame": "vNext",
       "fc:frame:image": `/hubscout.png`,
       "fc:frame:button:1": "SEARCH",
-      "fc:frame:post_url": `${
-        process.env.URL ?? "https://www.hubscout.xyz"
-      }/api/frame`,
+      "fc:frame:post_url": `${host ?? "https://www.hubscout.xyz"}/api/frame`,
       "fc:frame:input:text": "Search",
     },
-    metadataBase: new URL(process.env.URL ?? "https://www.hubscout.xyz"),
+    metadataBase: host ?? "https://www.hubscout.xyz",
   };
 }
 
