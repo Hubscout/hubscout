@@ -10,13 +10,14 @@ import * as fs from "fs";
 
 import { NextApiRequest, NextApiResponse } from "next";
 
-export const revalidate = 60 * 30; // 5 minutes
+export const revalidate = 0;
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
+    const start = Date.now();
     const post = posthog.init(process.env.POSTHOG_URL as string, {
       api_host: "https://app.posthog.com",
     });
@@ -129,6 +130,8 @@ export default async function handler(
         <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(inputText)}">
     </head>
     </html>`;
+    const end = Date.now();
+    console.log("Time taken", end - start);
     // Correctly creating and returning a NextResponse object with image/png content type
     res.status(200).send(data);
   } else {
