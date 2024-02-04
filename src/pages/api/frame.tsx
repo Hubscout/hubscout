@@ -66,6 +66,9 @@ export default async function handler(
         <meta property="fc:frame:button:1:action" content="redirect">
         <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(inputText)}">
     </head>
+    <body>
+<p>Hubscout</p>
+    </body>
     </html>`;
     const end = Date.now();
     console.log("Time taken", end - start);
