@@ -86,26 +86,24 @@ export default async function handler(
           maxWidth: "80%", // Limit width for better readability
         },
         image: {
-          width: 150,
-          height: 100,
+          width: 50,
+          height: 25,
           borderRadius: 8, // Optional: added for rounded corners
         },
       };
 
       const svg = await satori(
-        <div style={styles.outerDiv}>
-          <div style={styles.innerDiv as any}>
-            <div style={styles.rowDiv as any}>
-              {/* Use the Data URL as the image source */}
-              <img
-                src={cast.author.pfp.url}
-                style={styles.image}
-                alt="Author's Profile Picture"
-              />
-              <h1 style={styles.heading}>fname</h1>
-            </div>
-            <p style={styles.cast as any}>Text</p>
+        <div style={styles.innerDiv as any}>
+          <div style={styles.rowDiv as any}>
+            {/* Use the Data URL as the image source */}
+            <img
+              src={cast.author.pfp.url}
+              style={styles.image}
+              alt="Author's Profile Picture"
+            />
+            <h1 style={styles.heading}>fname</h1>
           </div>
+          <p style={styles.cast as any}>Text</p>
         </div>,
         {
           width: 400,
