@@ -122,12 +122,11 @@ export async function POST(req: NextRequest, res: Response) {
         <meta property="og:image" content="${pngBuffer}">
         <meta name="fc:frame" content="vNext">
         <meta name="fc:frame:image" content="${pngBuffer}">
-        <meta property="fc:frame:button:1" content ="Open App">
+        <meta property="fc:frame:button:1" content="Open App">
         <meta property="fc:frame:button:1:action" content="redirect">
         <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(
           inputText
         )}">
-
     </head>
     </html>
   `;

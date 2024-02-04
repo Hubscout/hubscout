@@ -26,10 +26,12 @@ export async function generateMetadata({
       "fc:frame": "vNext",
       "fc:frame:image": `/hubscout.png`,
       "fc:frame:button:1": "SEARCH",
-      "fc:frame:post_url": `${process.env.URL}/api/frame`,
+      "fc:frame:post_url": `${
+        process.env.URL ?? "https://www.hubscout.xyz"
+      }/api/frame`,
       "fc:frame:input:text": "Search",
     },
-    metadataBase: new URL(process.env.URL ?? ""),
+    metadataBase: new URL(process.env.URL ?? "https://www.hubscout.xyz"),
   };
 }
 
