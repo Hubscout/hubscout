@@ -55,7 +55,7 @@ export default async function handler(
           display: "flex",
           width: "100%",
           height: "100%",
-          backgroundColor: "#f4f4f4",
+          backgroundColor: "#f4f4f4", // Light grey background
           padding: 50,
           lineHeight: 1.2,
           fontSize: 24,
@@ -71,29 +71,37 @@ export default async function handler(
         rowDiv: {
           display: "flex",
           flexDirection: "row",
+          alignItems: "center", // Ensure vertical alignment in the row
         },
         heading: {
           marginLeft: 10,
-          color: "white",
-          fontSize: 24,
+          color: "#333", // Changed to dark for contrast against light background
+          fontSize: 24, // Large font size for the heading
         },
         cast: {
-          color: "white",
-          fontSize: 16,
+          color: "#333", // Changed to dark for visibility
+          fontSize: 16, // Smaller font size for the text
+          marginTop: 20, // Added space between the heading and the text
+          textAlign: "center", // Center-align the text
+          maxWidth: "80%", // Limit width for better readability
         },
         image: {
           width: 150,
           height: 100,
+          borderRadius: 8, // Optional: added for rounded corners
         },
       };
+
       const svg = await satori(
-        // Define styles as an object
-        // JSX with styles applied
         <div style={styles.outerDiv}>
           <div style={styles.innerDiv as any}>
             <div style={styles.rowDiv as any}>
               {/* Use the Data URL as the image source */}
-              <img src={cast.author.pfp.url} style={styles.image} />
+              <img
+                src={cast.author.pfp.url}
+                style={styles.image}
+                alt="Author's Profile Picture"
+              />
               <h1 style={styles.heading}>{cast.author.fname}</h1>
             </div>
             <p style={styles.cast}>{cast.text}</p>
