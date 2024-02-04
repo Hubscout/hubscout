@@ -135,7 +135,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     </html>
   `;
 
-  const response = new NextResponse(data);
+  // Correctly creating and returning a NextResponse object with image/png content type
+  const response = new NextResponse(pngBuffer);
   response.headers.set("content-type", "image/png");
   return response;
 }
