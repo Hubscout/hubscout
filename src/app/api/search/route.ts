@@ -38,6 +38,9 @@ const getUserInfo = async (fid: string) => {
 
 export async function GET(request: NextRequest, { params }: { params: any }) {
   try {
+    if (!params) {
+      return NextResponse.error();
+    }
     const { query, limit, time } = params;
 
     if (!query) return NextResponse.error();
