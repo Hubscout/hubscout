@@ -17,12 +17,12 @@ export default async function Page() {
         property="fc:frame:image"
         content="https://www.hubscout.xyz/api/image"
       />
+      <meta property="fc:frame:input:text" content="Search" />
       <meta property="fc:frame:button:1" content="SEARCH" />
       <meta
         property="fc:frame:post_url"
         content="https://www.hubscout.xyz/api/frame"
       />
-      <meta property="fc:frame:input:text" content="Search" />
 
       <div
         className="w-screen h-screen p-2 col-fs-c bg-white"
