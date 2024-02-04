@@ -10,15 +10,17 @@ import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { _fetchResultForHash } from "@/helpers/fetchCastResults";
 import { join } from "path";
 import * as fs from "fs";
+import { NextRequest, NextResponse } from "next/server";
 
 export const revalidate = 0;
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest, res: Response) {
   const post = posthog.init(process.env.POSTHOG_URL as string, {
     api_host: "https://app.posthog.com",
   });
   try {
-    const { buttonIndex, fid, inputText } = req.body?.untrustedData;
+    const body = await req.json();
+    const { buttonIndex, fid, inputText } = body.untrustedData;
     const fontPath = join(process.cwd(), "Roboto-Regular.ttf");
     const fontData = fs.readFileSync(fontPath);
 
@@ -62,7 +64,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
                 <meta name="fc:frame:button:2" content="Next">
 */
 
-    if (!cast) return res.status(400).send("No cast found");
+    if (!cast) return new Response("No cast found", { status: 404 });
     const svg = await satori(
       <div
         style={{
@@ -111,25 +113,26 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     );
 
     const pngBuffer = await sharp(Buffer.from(svg)).toFormat("png").toBuffer();
+    const data = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Hubscout</title>
+        <meta property="og:title" content="Hubscout">
+        <meta property="og:image" content="${pngBuffer}">
+        <meta name="fc:frame" content="vNext">
+        <meta name="fc:frame:image" content="${pngBuffer}">
+        <meta property="fc:frame:button:1" content ="Open App">
+        <meta property="fc:frame:button:1:action" content="redirect">
+        <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(
+          inputText
+        )}">
 
-    return res.send(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Hubscout</title>
-                <meta property="og:title" content="Hubscout">
-                <meta property="og:image" content="${pngBuffer}">
-                <meta name="fc:frame" content="vNext">
-                <meta name="fc:frame:image" content="${pngBuffer}">
-                <meta property="fc:frame:button:1" content ="Open App">
-                <meta property="fc:frame:button:1:action" content="redirect">
-                <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(
-                  inputText
-                )}">
+    </head>
+    </html>
+  `;
 
-            </head>
-            </html>
-          `);
+    return new Response(data, { headers: { "content-type": "image/png" } });
   } catch (e: unknown) {
     console.log(e);
     // @ts-expect-error
