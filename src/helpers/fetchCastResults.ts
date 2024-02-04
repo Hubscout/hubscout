@@ -72,6 +72,20 @@ export async function fetchCastResults(
   }
 }
 
+export async function _fetchResultForCast(hash_partial: string) {
+  // reconstruct the hash
+  const hash = `${hash_partial}`;
+
+  // grab the cast in question
+  const neynarResult = await neynar.lookUpCastByHash(hash);
+  const cast: CastWithPossibleParent = neynarResult?.result?.cast ?? null;
+
+  // if there's no cast, return null
+  if (!cast) return null;
+
+  return cast;
+}
+
 export async function _fetchResultForHash(hash_partial: string) {
   // reconstruct the hash
   const hash = `${hash_partial}`;

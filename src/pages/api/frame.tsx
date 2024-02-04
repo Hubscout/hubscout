@@ -4,7 +4,10 @@ import sharp from "sharp";
 import satori from "satori";
 import posthog from "posthog-js";
 import { client, embedder as embeddingFunction } from "@/lib/chroma";
-import { _fetchResultForHash } from "@/helpers/fetchCastResults";
+import {
+  _fetchResultForCast,
+  _fetchResultForHash,
+} from "@/helpers/fetchCastResults";
 import { join } from "path";
 import * as fs from "fs";
 
@@ -53,7 +56,7 @@ export default async function handler(
 
     // fetch the results
     const cast_results = await Promise.all(
-      hash_results.map(_fetchResultForHash)
+      hash_results.map(_fetchResultForCast)
     );
 
     console.log({ cast_results });
