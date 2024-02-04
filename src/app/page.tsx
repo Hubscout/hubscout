@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: any }) {
       "fc:frame": "vNext",
       "fc:frame:image": `/hubscout.png`,
       "fc:frame:button:1": "SEARCH",
-      "fc:frame:post_url": `${"https://www.hubscout.xyz"}/api/frame`,
+      "fc:frame:post_url": `https://www.hubscout.xyz/api/frame`,
       "fc:frame:input:text": "Search",
     },
     metadataBase: new URL("https://www.hubscout.xyz"),
