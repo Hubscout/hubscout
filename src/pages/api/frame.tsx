@@ -72,6 +72,7 @@ export default async function handler(
                 <meta name="fc:frame:button:2" content="Next">
 */
     console.log({ cast });
+    console.log("cast author", cast.author);
     const secondMiddle = Date.now();
     console.log("Time taken to fetch cast info", secondMiddle - start);
 
