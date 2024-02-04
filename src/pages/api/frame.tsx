@@ -2,7 +2,7 @@
 
 import sharp from "sharp";
 import satori from "satori";
-import posthog from "posthog-js";
+import { PostHog } from "posthog-node";
 import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import {
   _fetchResultForCast,
@@ -21,14 +21,17 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     const start = Date.now();
-    const post = posthog.init(process.env.POSTHOG_URL as string, {
-      api_host: "https://app.posthog.com",
+    const posthogClient = new PostHog(process.env.POSTHOG_URL as any, {
+      host: "https://app.posthog.com",
     });
 
     const { buttonIndex, fid, inputText } = req.body.untrustedData;
 
     console.log({ fid, inputText });
-    posthog.capture("search_frame", { fid, inputText });
+    posthogClient.capture({
+      distinctId: fid, // replace with a user's distinct ID
+      event: "frame_button_click",
+    });
 
     // define the collection for casts
     const collection = await client.getCollection({
