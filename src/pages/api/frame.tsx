@@ -48,7 +48,7 @@ export default async function handler(
 
     // grab the casts + their replies from the hashes
     const hash_results = results.ids?.[0] ?? [];
-
+    console.log("hash_results", hash_results);
     // if there are no results, return an empty array
     if (hash_results.length === 0)
       return new Response("No results found", { status: 404 });
