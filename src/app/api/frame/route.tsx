@@ -13,7 +13,7 @@ import * as fs from "fs";
 
 export const revalidate = 0;
 
-export default async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextApiRequest, res: NextApiResponse) {
   const post = posthog.init(process.env.POSTHOG_URL as string, {
     api_host: "https://app.posthog.com",
   });
