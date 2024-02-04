@@ -19,106 +19,104 @@ export async function POST(req: NextRequest, res: Response) {
   const post = posthog.init(process.env.POSTHOG_URL as string, {
     api_host: "https://app.posthog.com",
   });
-  try {
-    const body = await req.json();
-    const { buttonIndex, fid, inputText } = body.untrustedData;
-    const fontPath = join(process.cwd(), "Roboto-Regular.ttf");
-    const fontData = fs.readFileSync(fontPath);
-    const headersList = headers();
 
-    const host = headersList.get("host"); // to get domain
+  const body = await req.json();
+  const { buttonIndex, fid, inputText } = body.untrustedData;
+  const fontPath = join(process.cwd(), "Roboto-Regular.ttf");
+  const fontData = fs.readFileSync(fontPath);
+  const headersList = headers();
 
-    console.log({ host });
-    console.log({ fid, inputText });
-    posthog.capture("search_frame", { fid, inputText });
+  const host = headersList.get("host"); // to get domain
 
-    // define the collection for casts
-    const collection = await client.getCollection({
-      embeddingFunction,
-      name: "farcaster_search_v2",
-    });
+  console.log({ host });
+  console.log({ fid, inputText });
+  posthog.capture("search_frame", { fid, inputText });
 
-    // grab the results for the search
-    const results = await collection.query({
-      nResults: 1,
-      queryTexts: [inputText],
-    });
-    console.log("results", results);
+  // define the collection for casts
+  const collection = await client.getCollection({
+    embeddingFunction,
+    name: "farcaster_search_v2",
+  });
 
-    // grab the casts + their replies from the hashes
-    const hash_results = results.ids?.[0] ?? [];
+  // grab the results for the search
+  const results = await collection.query({
+    nResults: 1,
+    queryTexts: [inputText],
+  });
+  console.log("results", results);
 
-    // if there are no results, return an empty array
-    if (hash_results.length === 0) return [];
+  // grab the casts + their replies from the hashes
+  const hash_results = results.ids?.[0] ?? [];
 
-    // fetch the results
-    const cast_results = await Promise.all(
-      hash_results.map(_fetchResultForHash)
-    );
+  // if there are no results, return an empty array
+  if (hash_results.length === 0) return [];
 
-    console.log({ cast_results });
-    const cast = cast_results[0] as any;
+  // fetch the results
+  const cast_results = await Promise.all(hash_results.map(_fetchResultForHash));
 
-    // console.log({ fid, hash });
+  console.log({ cast_results });
+  const cast = cast_results[0] as any;
 
-    // if (!fid || !hash) {
-    //   return res.status(400).send("Invalid message");
-    // }
-    /*
+  // console.log({ fid, hash });
+
+  // if (!fid || !hash) {
+  //   return res.status(400).send("Invalid message");
+  // }
+  /*
     <meta name="fc:frame:button:1" content="Previous">
                 <meta name="fc:frame:button:2" content="Next">
 */
 
-    if (!cast) return new Response("No cast found", { status: 404 });
-    const svg = await satori(
+  if (!cast) return new Response("No cast found", { status: 404 });
+  const svg = await satori(
+    <div
+      style={{
+        justifyContent: "flex-start",
+        alignItems: "center",
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "f4f4f4",
+        padding: 50,
+        lineHeight: 1.2,
+        fontSize: 24,
+      }}
+    >
       <div
         style={{
-          justifyContent: "flex-start",
-          alignItems: "center",
           display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           width: "100%",
-          height: "100%",
-          backgroundColor: "f4f4f4",
-          padding: 50,
-          lineHeight: 1.2,
-          fontSize: 24,
+
+          justifyContent: "center",
+          padding: 20,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-
-            justifyContent: "center",
-            padding: 20,
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            {/* Use the Data URL as the image source */}
-            <img src={cast.author.pfp.url} width={300} height={250} />
-            <h1 style={{ marginLeft: 10 }}>{cast.author.fname}</h1>
-          </div>
-          <p>{cast.text}</p>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          {/* Use the Data URL as the image source */}
+          <img src={cast.author.pfp.url} width={300} height={250} />
+          <h1 style={{ marginLeft: 10 }}>{cast.author.fname}</h1>
         </div>
-      </div>,
-      {
-        width: 500,
-        height: 300,
-        fonts: [
-          {
-            data: fontData,
-            name: "Roboto",
-            style: "normal",
-            weight: 400,
-          },
-        ],
-      }
-    );
+        <p>{cast.text}</p>
+      </div>
+    </div>,
+    {
+      width: 500,
+      height: 300,
+      fonts: [
+        {
+          data: fontData,
+          name: "Roboto",
+          style: "normal",
+          weight: 400,
+        },
+      ],
+    }
+  );
 
-    const pngBuffer = await sharp(Buffer.from(svg)).toFormat("png").toBuffer();
-    const data = `
+  const pngBuffer = await sharp(Buffer.from(svg)).toFormat("png").toBuffer();
+  const data = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -136,13 +134,7 @@ export async function POST(req: NextRequest, res: Response) {
     </html>
   `;
 
-    const response = new NextResponse(data);
-    response.headers.set("content-type", "image/png");
-    return response;
-  } catch (e: unknown) {
-    console.log(e);
-    // @ts-expect-error
-
-    return res.status(400).send(`Failed to validate message: ${e.message}`);
-  }
+  const response = new NextResponse(data);
+  response.headers.set("content-type", "image/png");
+  return response;
 }
