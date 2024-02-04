@@ -26,8 +26,6 @@ export default async function handler(
     });
 
     const { buttonIndex, fid, inputText } = req.body.untrustedData;
-    const fontPath = join(process.cwd(), "Roboto-Regular.ttf");
-    const fontData = fs.readFileSync(fontPath);
 
     console.log({ fid, inputText });
     posthog.capture("search_frame", { fid, inputText });
@@ -54,85 +52,16 @@ export default async function handler(
     if (hash_results.length === 0)
       return new Response("No results found", { status: 404 });
 
-    // fetch the results
-    const cast_results = await Promise.all(
-      hash_results.map(_fetchResultForCast)
-    );
+    const hash = hash_results[0];
 
-    console.log({ cast_results });
-    const cast = cast_results[0] as any;
-
-    // console.log({ fid, hash });
-
-    // if (!fid || !hash) {
-    //   return res.status(400).send("Invalid message");
-    // }
-    /*
-    <meta name="fc:frame:button:1" content="Previous">
-                <meta name="fc:frame:button:2" content="Next">
-*/
-    console.log({ cast });
-    console.log("cast author", cast.author);
-    const secondMiddle = Date.now();
-    console.log("Time taken to fetch cast info", secondMiddle - start);
-
-    if (!cast) return new Response("No cast found", { status: 404 });
-    const svg = await satori(
-      <div
-        style={{
-          justifyContent: "flex-start",
-          alignItems: "center",
-          display: "flex",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "f4f4f4",
-          padding: 50,
-          lineHeight: 1.2,
-          fontSize: 24,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-
-            justifyContent: "center",
-            padding: 20,
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            {/* Use the Data URL as the image source */}
-            <img src={cast.author.pfp.url} width={300} height={250} />
-            <h1 style={{ marginLeft: 10 }}>{cast.author.fname}</h1>
-          </div>
-          <p>{cast.text}</p>
-        </div>
-      </div>,
-      {
-        width: 500,
-        height: 300,
-        fonts: [
-          {
-            data: fontData,
-            name: "Roboto",
-            style: "normal",
-            weight: 400,
-          },
-        ],
-      }
-    );
-
-    const pngBuffer = await sharp(Buffer.from(svg)).toFormat("png").toBuffer();
     const data = `<!DOCTYPE html>
     <html>
     <head>
         <title>Hubscout</title>
         <meta property="og:title" content="Hubscout">
-        <meta property="og:image" content="${pngBuffer}">
+        <meta property="og:image" content="https://www.hubscout.xyz/api/image?hash=${hash}">
         <meta name="fc:frame" content="vNext">
-        <meta name="fc:frame:image" content="${pngBuffer}">
+        <meta name="fc:frame:image" content="https://www.hubscout.xyz/api/image?hash=${hash}">
         <meta property="fc:frame:button:1" content="Open App">
         <meta property="fc:frame:button:1:action" content="redirect">
         <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(inputText)}">
