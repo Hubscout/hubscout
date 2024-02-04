@@ -7,7 +7,7 @@ import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { _fetchResultForHash } from "@/helpers/fetchCastResults";
 import { join } from "path";
 import * as fs from "fs";
-import { NextRequest, NextResponse } from "next/server";
+
 import { headers } from "next/headers";
 import { NextApiRequest, NextApiResponse } from "next";
 
