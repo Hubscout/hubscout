@@ -72,7 +72,7 @@ export async function fetchCastResults(
   }
 }
 
-async function _fetchResultForHash(hash_partial: string) {
+export async function _fetchResultForHash(hash_partial: string) {
   // reconstruct the hash
   const hash = `${hash_partial}`;
 
