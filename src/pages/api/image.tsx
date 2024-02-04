@@ -48,42 +48,54 @@ export default async function handler(
       if (!cast) {
         return res.status(404).send("Cast not found");
       }
-
+      const styles = {
+        outerDiv: {
+          justifyContent: "flex-start",
+          alignItems: "center",
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          backgroundColor: "#f4f4f4",
+          padding: 50,
+          lineHeight: 1.2,
+          fontSize: 24,
+        },
+        innerDiv: {
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "100%",
+          justifyContent: "center",
+          padding: 20,
+        },
+        rowDiv: {
+          display: "flex",
+          flexDirection: "row",
+        },
+        heading: {
+          marginLeft: 10,
+          color: "white",
+        },
+        image: {
+          width: 150,
+          height: 100,
+        },
+      };
       const svg = await satori(
-        <div
-          style={{
-            justifyContent: "flex-start",
-            alignItems: "center",
-            display: "flex",
-            width: "100%",
-            height: "100%",
-            backgroundColor: "f4f4f4",
-            padding: 50,
-            lineHeight: 1.2,
-            fontSize: 24,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "100%",
+        // Define styles as an object
 
-              justifyContent: "center",
-              padding: 20,
-            }}
-          >
-            <div style={{ display: "flex", flexDirection: "row" }}>
+        // JSX with styles applied
+        <div style={styles.outerDiv}>
+          <div style={styles.innerDiv as any}>
+            <div style={styles.rowDiv as any}>
               {/* Use the Data URL as the image source */}
-              <img src={cast.author.pfp.url} width={150} height={100} />
-              <h1 style={{ marginLeft: 10, color: "white" }}>
-                {cast.author.fname}
-              </h1>
+              <img src={cast.author.pfp.url} style={styles.image} />
+              <h1 style={styles.heading}>{cast.author.fname}</h1>
             </div>
             <p>{cast.text}</p>
           </div>
         </div>,
+
         {
           width: 500,
           height: 300,
