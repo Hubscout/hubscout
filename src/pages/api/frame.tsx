@@ -53,6 +53,7 @@ export default async function handler(
       return new Response("No results found", { status: 404 });
 
     const hash = hash_results[0];
+    console.log("hash", hash);
 
     const data = `<!DOCTYPE html>
     <html>
