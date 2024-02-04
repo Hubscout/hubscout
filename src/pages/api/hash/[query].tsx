@@ -17,7 +17,9 @@ export default async function handler(
     // Construct the redirect URL using the dynamic part
     const redirectUrl = `https://www.hubscout.xyz/${query}`;
 
-    // Perform the redirect
-    res.redirect(307, redirectUrl);
+    res.setHeader("Location", redirectUrl);
+
+    // Set the status code to 302 for a temporary redirect and end the response
+    res.status(302).end();
   }
 }
