@@ -10,7 +10,7 @@ import * as fs from "fs";
 
 import { NextApiRequest, NextApiResponse } from "next";
 
-export const revalidate = 0;
+export const revalidate = 60 * 30; // 5 minutes
 
 export default async function handler(
   req: NextApiRequest,
