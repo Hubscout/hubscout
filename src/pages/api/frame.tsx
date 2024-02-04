@@ -19,9 +19,9 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const post = posthog.init(process.env.POSTHOG_URL as string, {
-      api_host: "https://app.posthog.com",
-    });
+    // const post = posthog.init(process.env.POSTHOG_URL as string, {
+    //   api_host: "https://app.posthog.com",
+    // });
 
     const { buttonIndex, fid, inputText } = req.body.untrustedData;
     const fontPath = join(process.cwd(), "Roboto-Regular.ttf");
@@ -32,7 +32,7 @@ export default async function handler(
 
     console.log({ host });
     console.log({ fid, inputText });
-    posthog.capture("search_frame", { fid, inputText });
+    // posthog.capture("search_frame", { fid, inputText });
 
     // define the collection for casts
     const collection = await client.getCollection({
