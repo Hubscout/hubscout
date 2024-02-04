@@ -99,13 +99,13 @@ export default async function handler(
             <div style={styles.rowDiv as any}>
               {/* Use the Data URL as the image source */}
               <img src={cast.author.pfp.url} style={styles.image} />
-              <h1 style={styles.heading}>{cast.author.fname}</h1>
+              <h1 style={styles.heading}>{cast.author.username}</h1>
             </div>
             <p style={styles.cast as any}>{cast.text}</p>
           </div>
         </div>,
         {
-          width: 400,
+          width: 500,
           height: 200,
           fonts: [
             {
