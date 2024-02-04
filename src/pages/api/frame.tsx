@@ -66,7 +66,7 @@ export default async function handler(
         <meta property="fc:frame:button:1:action" content="post_redirect">
         <meta
         property="fc:frame:post_url"
-        content="https://www.hubscout.xyz/api/hash/${hash}"
+        content="https://www.hubscout.xyz/api/hash/${encodeURIComponent(inputText)}"
       />
     </head>
     <body>

@@ -11,10 +11,10 @@ export default async function handler(
   if (req.method === "POST") {
     // Method Not Allowed
     // Extract the dynamic part from the query object
-    const { hash } = req.query;
+    const { query } = req.query;
 
     // Construct the redirect URL using the dynamic part
-    const redirectUrl = `https://www.hubscout.xyz/${hash}`;
+    const redirectUrl = `https://www.hubscout.xyz/${query}`;
 
     // Perform the redirect
     res.redirect(307, redirectUrl);
