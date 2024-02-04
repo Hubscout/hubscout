@@ -2,7 +2,6 @@
 
 import sharp from "sharp";
 import satori from "satori";
-import posthog from "posthog-js";
 
 import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { _fetchResultForHash } from "@/helpers/fetchCastResults";
