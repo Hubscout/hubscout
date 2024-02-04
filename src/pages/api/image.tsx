@@ -75,6 +75,11 @@ export default async function handler(
         heading: {
           marginLeft: 10,
           color: "white",
+          fontSize: 24,
+        },
+        cast: {
+          color: "white",
+          fontSize: 16,
         },
         image: {
           width: 150,
@@ -83,7 +88,6 @@ export default async function handler(
       };
       const svg = await satori(
         // Define styles as an object
-
         // JSX with styles applied
         <div style={styles.outerDiv}>
           <div style={styles.innerDiv as any}>
@@ -92,13 +96,12 @@ export default async function handler(
               <img src={cast.author.pfp.url} style={styles.image} />
               <h1 style={styles.heading}>{cast.author.fname}</h1>
             </div>
-            <p>{cast.text}</p>
+            <p style={styles.cast}>{cast.text}</p>
           </div>
         </div>,
-
         {
-          width: 500,
-          height: 300,
+          width: 400,
+          height: 200,
           fonts: [
             {
               data: fontData,
