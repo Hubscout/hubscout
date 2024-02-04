@@ -138,6 +138,6 @@ export default async function handler(
     </html>
   `;
     // Correctly creating and returning a NextResponse object with image/png content type
-    res.send(data);
+    res.status(200).send(data);
   }
 }
