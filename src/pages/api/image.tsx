@@ -44,7 +44,7 @@ export default async function handler(
 */
 
       const cast = (await _fetchResultForCast(hash as string)) as any;
-      console.log({ cast });
+
       if (!cast) {
         return res.status(404).send("Cast not found");
       }
@@ -76,7 +76,8 @@ export default async function handler(
         heading: {
           marginLeft: 10,
           color: "#333", // Changed to dark for contrast against light background
-          fontSize: 24, // Large font size for the heading
+          fontSize: 20, // Large font size for the heading
+          fontWeight: "bold", // Bold font weight for the heading
         },
         cast: {
           color: "#333", // Changed to dark for visibility
@@ -84,26 +85,25 @@ export default async function handler(
           marginTop: 20, // Added space between the heading and the text
           textAlign: "center", // Center-align the text
           maxWidth: "80%", // Limit width for better readability
+          fontWeight: "bold", // Bold font weight for the heading
         },
         image: {
-          width: 50,
-          height: 25,
+          width: 150,
+          height: 100,
           borderRadius: 8, // Optional: added for rounded corners
         },
       };
 
       const svg = await satori(
-        <div style={styles.innerDiv as any}>
-          <div style={styles.rowDiv as any}>
-            {/* Use the Data URL as the image source */}
-            <img
-              src={cast.author.pfp.url}
-              style={styles.image}
-              alt="Author's Profile Picture"
-            />
-            <h1 style={styles.heading}>fname</h1>
+        <div style={styles.outerDiv}>
+          <div style={styles.innerDiv as any}>
+            <div style={styles.rowDiv as any}>
+              {/* Use the Data URL as the image source */}
+              <img src={cast.author.pfp.url} style={styles.image} />
+              <h1 style={styles.heading}>{cast.author.fname}</h1>
+            </div>
+            <p style={styles.cast as any}>{cast.text}</p>
           </div>
-          <p style={styles.cast as any}>Text</p>
         </div>,
         {
           width: 400,
