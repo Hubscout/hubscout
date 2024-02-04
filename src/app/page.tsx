@@ -6,28 +6,21 @@ import { Title } from "@/components/Title";
 import { APIDisclaimer } from "@/components/APIDisclaimer";
 import { headers } from "next/headers";
 
-export async function generateMetadata({ params }: { params: any }) {
-  return {
-    title: "Hubscout",
-    description: "Semantic search for Farcaster",
-    openGraph: {
-      title: "Hubscout",
-      images: [`/hubscout.png`],
-    },
-    other: {
-      "fc:frame": "vNext",
-      "fc:frame:image": `/hubscout.png`,
-      "fc:frame:button:1": "SEARCH",
-      "fc:frame:post_url": `https://www.hubscout.xyz/api/frame`,
-      "fc:frame:input:text": "Search",
-    },
-    metadataBase: new URL("https://www.hubscout.xyz"),
-  };
-}
-
 export default async function Page() {
   return (
     <>
+      <meta property="og:image" content="<generated>" />
+      <meta property="og:title" content="Hubscout" />
+      <meta property="og:description" content="Semantic search for Farcaster" />
+      <meta property="fc:frame" content="vNext" />
+      <meta property="fc:frame:image" content="<generated>" />
+      <meta property="fc:frame:button:1" content="SEARCH" />
+      <meta
+        property="fc:frame:post_url"
+        content="https://www.hubscout.xyz/api/frame"
+      />
+      <meta property="fc:frame:input:text" content="Search" />
+
       <div
         className="w-screen h-screen p-2 col-fs-c bg-white"
         style={{ paddingTop: "5vw" }}
