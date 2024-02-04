@@ -6,11 +6,7 @@ import { Title } from "@/components/Title";
 import { APIDisclaimer } from "@/components/APIDisclaimer";
 import { headers } from "next/headers";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { match: string; turn: string };
-}) {
+export async function generateMetadata({ params }: { params: any }) {
   const headersList = headers();
 
   const host = headersList.get("host"); // to get domain
