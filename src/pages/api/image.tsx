@@ -44,7 +44,7 @@ export default async function handler(
 */
 
       const cast = (await _fetchResultForCast(hash as string)) as any;
-
+      console.log({ cast });
       if (!cast) {
         return res.status(404).send("Cast not found");
       }
@@ -76,8 +76,7 @@ export default async function handler(
         heading: {
           marginLeft: 10,
           color: "#333", // Changed to dark for contrast against light background
-          fontSize: 20, // Large font size for the heading
-          fontWeight: "bold", // Bold font weight for the heading
+          fontSize: 24, // Large font size for the heading
         },
         cast: {
           color: "#333", // Changed to dark for visibility
