@@ -3,7 +3,6 @@ import { SearchBar } from "@/components/SearchBar";
 import { Title } from "@/components/Title";
 import { Cast } from "@/components/Cast";
 import Filter from "@/components/Filter";
-import Contains from "@/components/Contains";
 
 export const revalidate = 60 * 30; // 5 minutes
 export const maxDuration = 300; // This function can run for a maximum of 5 min

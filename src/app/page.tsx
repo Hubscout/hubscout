@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suggestions } from "@/components/Suggestions";
 import { SearchBar } from "@/components/SearchBar";
 import { Title } from "@/components/Title";
@@ -29,7 +31,7 @@ export async function generateMetadata({
       "fc:frame:post_url": `${host ?? "https://www.hubscout.xyz"}/api/frame`,
       "fc:frame:input:text": "Search",
     },
-    metadataBase: host ?? "https://www.hubscout.xyz",
+    metadataBase: new URL(host ?? "https://www.hubscout.xyz"),
   };
 }
 

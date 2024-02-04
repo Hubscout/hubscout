@@ -1,6 +1,6 @@
 // @ts-ignore
 
-import type { NextApiRequest, NextApiResponse } from "next";
+export const dynamic = "force-dynamic";
 
 import sharp from "sharp";
 import satori from "satori";
