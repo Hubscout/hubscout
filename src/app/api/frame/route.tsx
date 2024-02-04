@@ -136,7 +136,9 @@ export async function POST(req: NextRequest, res: Response) {
     </html>
   `;
 
-    return new Response(data, { headers: { "content-type": "image/png" } });
+    const response = new NextResponse(data);
+    response.headers.set("content-type", "image/png");
+    return response;
   } catch (e: unknown) {
     console.log(e);
     // @ts-expect-error
