@@ -2,13 +2,12 @@
 
 import sharp from "sharp";
 import satori from "satori";
-
+import posthog from "posthog-js";
 import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { _fetchResultForHash } from "@/helpers/fetchCastResults";
 import { join } from "path";
 import * as fs from "fs";
 
-import { headers } from "next/headers";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export const revalidate = 0;
@@ -18,20 +17,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    // const post = posthog.init(process.env.POSTHOG_URL as string, {
-    //   api_host: "https://app.posthog.com",
-    // });
+    const post = posthog.init(process.env.POSTHOG_URL as string, {
+      api_host: "https://app.posthog.com",
+    });
 
     const { buttonIndex, fid, inputText } = req.body.untrustedData;
     const fontPath = join(process.cwd(), "Roboto-Regular.ttf");
     const fontData = fs.readFileSync(fontPath);
-    const headersList = headers();
 
-    const host = headersList.get("host"); // to get domain
-
-    console.log({ host });
     console.log({ fid, inputText });
-    // posthog.capture("search_frame", { fid, inputText });
+    posthog.capture("search_frame", { fid, inputText });
 
     // define the collection for casts
     const collection = await client.getCollection({
@@ -131,13 +126,11 @@ export default async function handler(
         <meta name="fc:frame:image" content="${pngBuffer}">
         <meta property="fc:frame:button:1" content="Open App">
         <meta property="fc:frame:button:1:action" content="redirect">
-        <meta property="fc:frame:button:1:url" content="${
-          host ?? "https://www.hubscout.xyz"
-        }/${encodeURIComponent(inputText)}">
+        <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(inputText)}">
     </head>
     </html>`;
     // Correctly creating and returning a NextResponse object with image/png content type
-    res.send(data);
+    res.status(200).send(data);
   } else {
     res.status(405).send("Method not allowed");
   }
