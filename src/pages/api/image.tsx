@@ -76,8 +76,10 @@ export default async function handler(
           >
             <div style={{ display: "flex", flexDirection: "row" }}>
               {/* Use the Data URL as the image source */}
-              <img src={cast.author.pfp.url} width={300} height={250} />
-              <h1 style={{ marginLeft: 10 }}>{cast.author.fname}</h1>
+              <img src={cast.author.pfp.url} width={150} height={100} />
+              <h1 style={{ marginLeft: 10, color: "white" }}>
+                {cast.author.fname}
+              </h1>
             </div>
             <p>{cast.text}</p>
           </div>
