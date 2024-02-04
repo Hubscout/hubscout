@@ -15,7 +15,7 @@ import { headers } from "next/headers";
 
 export const revalidate = 0;
 
-export async function POST(req: NextRequest, res: Response) {
+export async function POST(req: NextRequest, res: NextResponse) {
   const post = posthog.init(process.env.POSTHOG_URL as string, {
     api_host: "https://app.posthog.com",
   });
@@ -49,7 +49,8 @@ export async function POST(req: NextRequest, res: Response) {
   const hash_results = results.ids?.[0] ?? [];
 
   // if there are no results, return an empty array
-  if (hash_results.length === 0) return [];
+  if (hash_results.length === 0)
+    return new Response("No results found", { status: 404 });
 
   // fetch the results
   const cast_results = await Promise.all(hash_results.map(_fetchResultForHash));
