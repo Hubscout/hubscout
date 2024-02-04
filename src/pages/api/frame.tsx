@@ -63,7 +63,7 @@ export default async function handler(
         <meta name="fc:frame" content="vNext">
         <meta name="fc:frame:image" content="https://www.hubscout.xyz/api/image?hash=${hash}">
         <meta property="fc:frame:button:1" content="Open App">
-        <meta property="fc:frame:button:1:action" content="redirect">
+        <meta property="fc:frame:button:1:action" content="post_redirect">
         <meta property="fc:frame:button:1:url" content="https://www.hubscout.xyz/${encodeURIComponent(inputText)}">
     </head>
     <body>
