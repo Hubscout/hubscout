@@ -40,6 +40,8 @@ export default async function handler(
       nResults: 1,
       queryTexts: [inputText],
     });
+    const middle = Date.now();
+    console.log("Time taken to fetch embeddings", middle - start);
     console.log("results", results);
 
     // grab the casts + their replies from the hashes
@@ -67,6 +69,8 @@ export default async function handler(
                 <meta name="fc:frame:button:2" content="Next">
 */
     console.log({ cast });
+    const secondMiddle = Date.now();
+    console.log("Time taken to fetch cast info", secondMiddle - start);
 
     if (!cast) return new Response("No cast found", { status: 404 });
     const svg = await satori(
