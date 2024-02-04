@@ -38,13 +38,7 @@ const getUserInfo = async (fid: string) => {
 
 export async function GET(request: NextRequest, { params }: { params: any }) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-
-    const query = searchParams.get("query");
-
-    const limit = searchParams.get("limit");
-
-    const time = searchParams.get("time");
+    const { query, limit, time } = params;
 
     if (!query) return NextResponse.error();
     const decodedQuery = decodeURIComponent(query);
