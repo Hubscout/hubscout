@@ -22,6 +22,7 @@
     "next13-progressbar": "^1.1.3",
     "openai": "^4.24.7",
     "posthog-js": "^1.104.4",
+    "posthog-node": "^3.6.2",
     "prisma": "^5.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
