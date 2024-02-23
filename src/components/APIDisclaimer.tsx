@@ -6,11 +6,19 @@ export function APIDisclaimer() {
       <div className="h-1" />
       <span className="pl-4 text-xs font-semibold uppercase text-slate-400">
         DC{" "}
-        <Link style={{ color: "#8562CE" }} target="_blank" href="https://warpcast.com/matthew">
-          Matthew
+        <Link
+          style={{ color: "#8562CE" }}
+          target="_blank"
+          href="https://warpcast.com/gregfromstl"
+        >
+          Greg
         </Link>{" "}
         or{" "}
-        <Link style={{ color: "#8562CE" }} target="_blank" href="https://warpcast.com/kevinoconnell">
+        <Link
+          style={{ color: "#8562CE" }}
+          target="_blank"
+          href="https://warpcast.com/kevinoconnell"
+        >
           Kevin
         </Link>{" "}
         for API
