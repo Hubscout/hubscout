@@ -15,6 +15,7 @@ export default async function handler(
 ) {
   try {
     const { hash } = req.query;
+    console.log("hash", hash);
     if (!hash) {
       // Specify the path to the public folder and the image name
       const imagePath = join(process.cwd(), "public", "hubscout.png");
