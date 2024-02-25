@@ -1,22 +1,20 @@
-import { client, embedder as embeddingFunction } from "@/lib/chroma";
 import { type CastWithPossibleParent } from "@/components/Cast";
 import { neynar } from "@/lib/neynar";
-import { subDays, subWeeks, subMonths, subYears } from "date-fns";
-import { IncludeEnum } from "chromadb";
+import { subDays, subMonths, subWeeks, subYears } from "date-fns";
+
+import supabase from "@/lib/supabase";
+import OpenAI from "openai";
 export const maxDuration = 10; // This function can run for a maximum of 5 min
 export async function fetchCastResults(
   query: string,
-  timeQuery?: "day" | "week" | "month" | "year" | null
+  timeQuery?: "day" | "week" | "month" | "year" | null,
+  channel?: string | null,
+  author?: string | null,
 ): Promise<CastWithPossibleParent[]> {
   try {
-    // define the collection for casts
-    const collection = await client.getCollection({
-      embeddingFunction,
-      name: "farcaster_search_v2",
-    });
-
     // Determine the start timestamp based on the time query
     let startTime: Date | null = null;
+
     if (timeQuery) {
       const now = new Date();
       switch (timeQuery) {
@@ -36,32 +34,50 @@ export async function fetchCastResults(
           startTime = null;
       }
     }
-
-    // grab the results for the search
-    const results = await collection.query({
-      nResults,
-      queryTexts: [decodeURIComponent(query)],
-      where: startTime
-        ? // timestamp: { $gte: startTime.getTime() },
-          // username: { $eq: "dwr" },
-          {
-            timestamp: {
-              $gt: startTime.getTime(),
-            },
-          }
-        : undefined,
+    let finishedQuery = decodeURIComponent(query);
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY as string });
+    const embedding = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: finishedQuery,
     });
-    console.log("results", results);
+    const queryEmbedding = embedding.data[0].embedding;
 
+    const params = {
+      query_embedding: queryEmbedding,
+      n_results: nResults,
+      channel,
+      filter_timestamp: startTime,
+      author,
+      fid: null,
+    };
+
+    const { data, error } = await supabase.rpc(
+      "get_casts_embeddings_dynamic",
+      params,
+    );
+
+    // // grab the results for the search
+    // const results = await collection.query({
+    //   nResults,
+    //   queryTexts: [],
+    //   where: startTime
+    //     ? // timestamp: { $gte: startTime.getTime() },
+    //       // username: { $eq: "dwr" },
+    //       {
+    //         timestamp: {
+    //           $gt: startTime.getTime(),
+    //         },
+    //       }
+    //     : undefined,
+    // });
+    // console.log("results", results);
+
+    if (!data || !data.length) return [];
     // grab the casts + their replies from the hashes
-    const hash_results = results.ids?.[0] ?? [];
-
-    // if there are no results, return an empty array
-    if (hash_results.length === 0) return [];
-
+    let cast_ids = data.map((d: any) => d.id);
     // fetch the results
     const cast_results = await Promise.all(
-      hash_results.map(_fetchResultForHash)
+      cast_ids.map(_fetchResultForHash),
     );
 
     // return the results
