@@ -5,6 +5,8 @@ import classNames from "classnames";
 import { useState } from "react";
 import { arrow } from "@/svg";
 import { constructHref } from "./UsernameFilter";
+import { sendEventToAmplitude } from "@/lib/amplitude";
+import { getUserId } from "@/helpers/utils";
 
 export function SearchBar({
   initValue,
@@ -15,12 +17,20 @@ export function SearchBar({
   const [value, setValue] = useState<string>(decodeURIComponent(initValue));
   const router = useRouter();
 
-  function onSubmit(
+  async function onSubmit(
     e:
       | React.FormEvent<HTMLFormElement>
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     e.preventDefault();
+    try {
+      const userId = getUserId();
+      await sendEventToAmplitude(userId, "search", {
+        query: decodeURIComponent(value),
+      });
+    } catch (e) {
+      console.error(e);
+    }
     router.push(`${constructHref(value, time, channel, username)}`);
   }
 
