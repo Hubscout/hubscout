@@ -12,7 +12,6 @@ export default async function handler(
     // Method Not Allowed
     // Extract the dynamic part from the query object
     const { query } = req.query;
-    console.log({ query });
 
     // Construct the redirect URL using the dynamic part
     const redirectUrl = `https://www.hubscout.xyz/${query}`;
