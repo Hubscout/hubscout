@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "@/styles/index.scss";
+import { RouteChangeListener } from "./route-change-listener";
 
 export const metadata: Metadata = {
   title: "Hubscout",
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <WithProgressBar>{children}</WithProgressBar>
         <Analytics />
+        <RouteChangeListener />
       </body>
     </html>
   );
