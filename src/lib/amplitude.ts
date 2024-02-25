@@ -6,7 +6,7 @@ export async function sendEventToAmplitude(
   event_properties?: any,
 ) {
   const data = {
-    api_key: process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY,
+    api_key: process.env.NEXT_PUBLIC_AMPLITUDE_API,
     events: [{
       user_id: user_id,
       event_type,
