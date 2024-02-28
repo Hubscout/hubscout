@@ -23,7 +23,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         <Title />
         <SearchBar initValue={query} time={time} />
         <div className="flex w-full space-x-3">
-          <Filter query={params.query} time={time} />
+          {/* <Filter query={params.query} time={time} /> */}
           {/* <Contains query={params.query} contains={contains} time={time} /> */}
         </div>
 
