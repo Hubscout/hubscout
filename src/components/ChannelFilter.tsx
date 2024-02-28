@@ -16,6 +16,17 @@ interface TimeOption {
 const defaultChannelOptions: TimeOption[] = [
   { id: "Any Channel", parent_url: null, image_url: null },
   {
+    id: "farcon",
+    parent_url:
+      "chain://eip155:1/erc721:0x2A9EA02E4c2dcd56Ba20628Fe1bd46bAe2C62746",
+    image_url: "https://i.imgur.com/mtH8eq1.jpg",
+  },
+  {
+    id: "bounties",
+    parent_url: "https://www.bountycaster.xyz",
+    image_url: "https://warpcast.com/~/channel-images/bounties.png",
+  },
+  {
     id: "degen",
     parent_url:
       "chain://eip155:7777777/erc721:0x5d6a07d07354f8793d1ca06280c4adf04767ad7e",
@@ -66,9 +77,9 @@ const ChannelFilter: React.FC<FilterProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  let defaultChannelsMinusAny = defaultChannelOptions.slice(1);
   let channels = Array.isArray(channelOptions)
-    ? channelOptions
+    ? [...defaultChannelsMinusAny, ...channelOptions]
     : defaultChannelOptions;
 
   // Filter channels based on the filterText

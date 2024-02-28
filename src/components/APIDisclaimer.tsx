@@ -9,14 +9,6 @@ export function APIDisclaimer() {
         <Link
           style={{ color: "#8562CE" }}
           target="_blank"
-          href="https://warpcast.com/gregfromstl"
-        >
-          Greg
-        </Link>{" "}
-        or{" "}
-        <Link
-          style={{ color: "#8562CE" }}
-          target="_blank"
           href="https://warpcast.com/kevinoconnell"
         >
           Kevin

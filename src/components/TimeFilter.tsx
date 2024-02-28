@@ -14,6 +14,7 @@ const timeOptions: TimeOption[] = [
   { label: "Past Day", value: "day" },
   { label: "Past Week", value: "week" },
   { label: "Past Month", value: "month" },
+  {label: "Past Three Months", value: "three_months" },
   { label: "Past Year", value: "year" },
 ];
 
