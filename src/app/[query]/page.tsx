@@ -13,7 +13,13 @@ export const maxDuration = 10;
 
 export default async function Page({ params, searchParams }: PageProps) {
   let query = params.query;
-  const time = searchParams?.time as "day" | "week" | "month" | "year" | null;
+  const time = searchParams?.time as
+    | "day"
+    | "week"
+    | "month"
+    | "year"
+    | "three_months"
+    | null;
   let channel = searchParams?.channel as string | null;
   let username = searchParams?.username as string | null;
   const casts = await fetchCastResults(

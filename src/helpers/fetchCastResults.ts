@@ -7,7 +7,7 @@ import OpenAI from "openai";
 export const maxDuration = 10; // This function can run for a maximum of 5 min
 export async function fetchCastResults(
   query: string,
-  timeQuery?: "day" | "week" | "month" | "year" | null,
+  timeQuery?: "day" | "week" | "month" | "three_months" | "year" | null,
   channel?: string | null,
   author?: string | null,
 ): Promise<CastWithPossibleParent[]> {
@@ -26,6 +26,9 @@ export async function fetchCastResults(
           break;
         case "month":
           startTime = subMonths(now, 1);
+          break;
+        case "three_months":
+          startTime = subMonths(now, 3);
           break;
         case "year":
           startTime = subYears(now, 1);

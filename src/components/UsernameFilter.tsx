@@ -94,9 +94,10 @@ const UsernameFilter: React.FC<FilterProps> = ({
   }, []);
   const defaultUser = { fid: null, username: null, pfp: { url: null } };
 
-  let usernameOptions = Array.isArray(usernames)
-    ? [defaultUser, ...usernames]
-    : [defaultUser];
+  let usernameOptions =
+    Array.isArray(usernames) && usernameText
+      ? [defaultUser, ...usernames]
+      : [defaultUser];
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
@@ -153,42 +154,36 @@ const UsernameFilter: React.FC<FilterProps> = ({
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            {usernameText ? (
-              usernameOptions.map((user: any) => (
-                <Link
-                  key={user.fid ?? "any"}
-                  onClick={async () => {
-                    setIsOpen(false);
-                    setUsernameText("");
-                  }}
-                  className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
-                  href={constructHref(query, time, channel, user.username)}
+            {usernameOptions.map((user: any) => (
+              <Link
+                key={user.fid ?? "any"}
+                onClick={async () => {
+                  setIsOpen(false);
+                  setUsernameText("");
+                }}
+                className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
+                href={constructHref(query, time, channel, user.username)}
+              >
+                <div
+                  key={user.fid}
+                  className="flex flex-row items-center space-x-3"
                 >
-                  <div
-                    key={user.fid}
-                    className="flex flex-row items-center space-x-3"
-                  >
-                    {user.pfp.url ? (
-                      <img
-                        src={user.pfp.url}
-                        alt=""
-                        key={user.fid}
-                        className="w-6 h-6 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-6 h-6" />
-                    )}
-                    <p key={user.fid} className="truncate flex-grow">
-                      {user.username ?? "Any User"}
-                    </p>{" "}
-                  </div>
-                </Link>
-              ))
-            ) : (
-              <div className="w-full">
-                <p className="text-xs text-center">Enter text to find users</p>
-              </div>
-            )}
+                  {user.pfp.url ? (
+                    <img
+                      src={user.pfp.url}
+                      alt=""
+                      key={user.fid}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-6 h-6" />
+                  )}
+                  <p key={user.fid} className="truncate flex-grow">
+                    {user.username ?? "Any User"}
+                  </p>{" "}
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       )}
