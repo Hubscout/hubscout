@@ -7,10 +7,15 @@ import { arrow } from "@/svg";
 import { constructHref } from "./UsernameFilter";
 import { sendEventToAmplitude } from "@/lib/amplitude";
 import { getUserId } from "@/helpers/utils";
+import FarcasterProfileInfo from "@/app/FarcasterProfileInfo";
 
 export function SearchBar({ initValue, time, channel, fid }: SearchBarProps) {
   const [value, setValue] = useState<string>(decodeURIComponent(initValue));
   const router = useRouter();
+  const {
+    isAuthenticated,
+    profile: { username, fid: userFid, bio, displayName, pfpUrl },
+  } = FarcasterProfileInfo();
 
   async function onSubmit(
     e:
@@ -26,7 +31,7 @@ export function SearchBar({ initValue, time, channel, fid }: SearchBarProps) {
     } catch (e) {
       console.error(e);
     }
-    router.push(`${constructHref(value, time, channel, fid)}`);
+    router.push(`${constructHref(value, time, channel, fid, userFid ?? null)}`);
   }
 
   return (

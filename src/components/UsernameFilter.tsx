@@ -12,12 +12,9 @@ export const constructHref = (
   query: string,
   time: string | null | undefined,
   channel: string | null | undefined,
-  fid: string | null | undefined
+  fid: string | null | undefined,
+  userFid: number | null | undefined
 ) => {
-  const {
-    isAuthenticated,
-    profile: { username, fid: userFid, bio, displayName, pfpUrl },
-  } = FarcasterProfileInfo();
   // Encode the query part of the URL to handle special characters
   // Start constructing the URL with the encoded query
   let url = `/${query}`;
@@ -29,7 +26,8 @@ export const constructHref = (
   if (time) queryParams.push(`time=${encodeURIComponent(time)}`);
   if (channel) queryParams.push(`channel=${encodeURIComponent(channel)}`);
   if (fid) queryParams.push(`fid=${encodeURIComponent(fid)}`);
-  if (userFid) queryParams.push(`userFid=${encodeURIComponent(userFid)}`);
+  if (userFid)
+    queryParams.push(`userFid=${encodeURIComponent(userFid.toString())}`);
 
   // Join all query parameters with '&' and prepend with '?' if there are any parameters
   if (queryParams.length > 0) {
@@ -55,7 +53,10 @@ const UsernameFilter: React.FC<FilterProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [usernameText, setUsernameText] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const {
+    isAuthenticated,
+    profile: { username, fid: userFid, bio, displayName, pfpUrl },
+  } = FarcasterProfileInfo();
   const [usernameData, setUsernameData] = useState<any>([]);
   const { data: usernames, error } = useSWR(
     `/api/get_usernames/${usernameText}`,
@@ -168,7 +169,13 @@ const UsernameFilter: React.FC<FilterProps> = ({
                   setUsernameText("");
                 }}
                 className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
-                href={constructHref(query, time, channel, user.fid)}
+                href={constructHref(
+                  query,
+                  time,
+                  channel,
+                  user.fid,
+                  userFid ?? null
+                )}
               >
                 <div
                   key={user.fid}

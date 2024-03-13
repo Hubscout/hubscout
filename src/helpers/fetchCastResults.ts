@@ -53,7 +53,7 @@ export async function fetchCastResults(
       match_count: nResults,
       userfid: fid ? parseInt(fid) : 3,
       optionaltimestamp: startTime,
-      optionalparenturl: channel,
+      optionalparenturl: channel ? decodeURIComponent(channel) : null,
     };
 
     const { data, error } = await supabase.rpc(
@@ -123,7 +123,6 @@ export async function _fetchResultForHash(hash_partial: string) {
   //     cast.author.pfp = cast.author.pfp.url;
   //   }
   // }
-  console;
 
   // grab the thread hash
   const threadHash = cast?.threadHash;
