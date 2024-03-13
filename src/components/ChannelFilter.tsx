@@ -165,10 +165,6 @@ const ChannelFilter: React.FC<FilterProps> = ({
                   key={option.parent_url ?? "any"}
                   onClick={async () => {
                     setIsOpen(false);
-                    const { data, error } = await supabase.rpc(
-                      "increment",
-                      option.id
-                    );
                     setFilterText("");
                   }}
                   className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
