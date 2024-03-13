@@ -16,10 +16,12 @@ export const config = {
 export default async function middleware(request: NextRequest) {
   // You could alternatively limit based on user ID or similar
   const ip = request.ip ?? "127.0.0.1";
+  console.log("ip", ip);
   const { success, pending, limit, reset, remaining } = await ratelimit.limit(
     ip,
   );
-  return success
-    ? NextResponse.next()
-    : NextResponse.redirect(new URL("/blocked", request.url));
+  console.log({ success, pending, limit, reset, remaining });
+  return success ? NextResponse.next() : NextResponse.redirect(
+    new URL("https://www.hubscout.xyz/api/blocked"),
+  );
 }
