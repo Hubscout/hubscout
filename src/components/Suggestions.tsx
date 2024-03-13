@@ -4,7 +4,9 @@ import Link from "next/link";
 export function Suggestions() {
   return (
     <div className="border-2 border-slate-100 w-full p-2 rounded-xl">
-      <span className="text-sm font-medium text-slate-400 p-2">Not sure what to search? Try these suggestions!</span>
+      <span className="text-sm font-medium text-slate-400 p-2">
+        Not sure what to search? Try these suggestions!
+      </span>
       <div className="h-1" />
       {suggestions.map((text: string, i: number) => (
         <Link
@@ -21,10 +23,10 @@ export function Suggestions() {
 }
 
 const suggestions = [
-  "@dwr low effort replies",
-  "greg's hot chocolate",
+  "How should I start learning to code?",
+  "$DEGEN airdrop one million reward",
   "how to be an angel investor",
-  "will farcaster release a token?",
+  "What is the best VR headset to get?",
   "is farcaster better than bluesky",
-  "apple's fight over app store fees",
+  "How can I get around the 30 percent fee on the app store?",
 ];

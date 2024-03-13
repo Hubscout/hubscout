@@ -4,12 +4,14 @@ import { subDays, subMonths, subWeeks, subYears } from "date-fns";
 
 import supabase from "@/lib/supabase";
 import OpenAI from "openai";
+import { formatNeynarCast } from "./utils";
 export const maxDuration = 10; // This function can run for a maximum of 5 min
 export async function fetchCastResults(
   query: string,
   timeQuery?: "day" | "week" | "month" | "three_months" | "year" | null,
   channel?: string | null,
   author?: string | null,
+  fid?: string | null,
 ): Promise<CastWithPossibleParent[]> {
   try {
     // Determine the start timestamp based on the time query
@@ -46,38 +48,28 @@ export async function fetchCastResults(
     const queryEmbedding = embedding.data[0].embedding;
 
     const params = {
+      authorfid: author,
       query_embedding: queryEmbedding,
-      n_results: nResults,
-      channel,
-      filter_timestamp: startTime,
-      author,
-      fid: null,
+      match_count: nResults,
+      userfid: fid ? parseInt(fid) : 3,
+      optionaltimestamp: startTime,
+      optionalparenturl: channel ? decodeURIComponent(channel) : null,
     };
 
     const { data, error } = await supabase.rpc(
-      "get_casts_embeddings_dynamic",
+      "match_casts_adaptive",
       params,
     );
 
-    // // grab the results for the search
-    // const results = await collection.query({
-    //   nResults,
-    //   queryTexts: [],
-    //   where: startTime
-    //     ? // timestamp: { $gte: startTime.getTime() },
-    //       // username: { $eq: "dwr" },
-    //       {
-    //         timestamp: {
-    //           $gt: startTime.getTime(),
-    //         },
-    //       }
-    //     : undefined,
-    // });
-    // console.log("results", results);
+    // if there's an error, return an empty array
+    if (error) {
+      console.log("error in fetchcast", error);
+      return [];
+    }
 
     if (!data || !data.length) return [];
     // grab the casts + their replies from the hashes
-    let cast_ids = data.map((d: any) => d.id);
+    let cast_ids = data.map((d: any) => d.hash);
     // fetch the results
     const cast_results = await Promise.all(
       cast_ids.map(_fetchResultForHash),
@@ -93,41 +85,59 @@ export async function fetchCastResults(
 
 export async function _fetchResultForCast(hash_partial: string) {
   // reconstruct the hash
-  const hash = `${hash_partial}`;
+  const hash = `0x${hash_partial}`;
 
   // grab the cast in question
   const neynarResult = await neynar.lookUpCastByHash(hash);
   const cast: CastWithPossibleParent = neynarResult?.result?.cast ?? null;
-
-  // if there's no cast, return null
-  if (!cast) return null;
 
   return cast;
 }
 
 export async function _fetchResultForHash(hash_partial: string) {
   // reconstruct the hash
-  const hash = `${hash_partial}`;
 
-  // grab the cast in question
-  const neynarResult = await neynar.lookUpCastByHash(hash);
-  const cast: CastWithPossibleParent = neynarResult?.result?.cast ?? null;
+  const cast = await _fetchResultForCast(hash_partial);
 
-  // if there's no cast, return null
   if (!cast) return null;
+
+  // // grab the cast in question
+  // const castFetch = await supabase.from("casts").select(
+  //   "*",
+  // )
+  //   .eq("hash", hash) as any;
+
+  // let cast = castFetch.data[0];
+  // console.log("cast", cast);
+  // // if there's no cast, return null
+  // if (!cast) return null;
+
+  // const authorFetch = await supabase.from("fnames").select("*").eq(
+  //   "fid",
+  //   cast.fid,
+  // );
+
+  // if (authorFetch && authorFetch.data && authorFetch.data.length) {
+  //   cast.author = authorFetch.data[0];
+  //   if (cast.author && cast.author.pfp && cast.author.pfp.url) {
+  //     cast.author.pfp = cast.author.pfp.url;
+  //   }
+  // }
 
   // grab the thread hash
   const threadHash = cast?.threadHash;
 
   // if there's a parent_hash, grab the parent
   if (cast?.hash && threadHash !== cast?.hash) {
-    cast.parent = await neynar
-      .lookUpCastByHash(threadHash)
-      .then((r) => r.result?.cast ?? undefined);
+    cast.parent = formatNeynarCast(
+      await neynar
+        .lookUpCastByHash(threadHash)
+        .then((r) => r.result?.cast ?? undefined),
+    );
   }
 
   // return the cast
   return cast;
 }
 
-const nResults = 25;
+const nResults = 75;

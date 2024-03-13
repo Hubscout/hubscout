@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import useSWR from "swr";
 import { constructHref } from "./UsernameFilter";
+import FarcasterProfileInfo from "@/app/FarcasterProfileInfo";
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface TimeOption {
@@ -38,26 +39,34 @@ const defaultChannelOptions: TimeOption[] = [
     parent_url: "https://farcaster.group/founders",
     image_url: "https://warpcast.com/~/channel-images/founders.png",
   },
+  {
+    id: "degendao",
+    parent_url: "https://warpcast.com/~/channel/degendao",
+    image_url: "https://i.imgur.com/33J39Sf.png",
+  },
 ];
 
 interface FilterProps {
   query: string;
   time?: string | null;
   channel?: string | null;
-  username?: string | null;
+  fid?: string | null;
 }
 
 const ChannelFilter: React.FC<FilterProps> = ({
   query,
   time,
   channel,
-  username,
+  fid,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filterText, setFilterText] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { data: channelOptions, error } = useSWR("/api/get_channels", fetcher);
-
+  const {
+    isAuthenticated,
+    profile: { username, fid: userFid, bio, displayName, pfpUrl },
+  } = FarcasterProfileInfo();
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -77,16 +86,29 @@ const ChannelFilter: React.FC<FilterProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  let defaultChannelsMinusAny = defaultChannelOptions.slice(1);
-  let channels = Array.isArray(channelOptions)
-    ? [...defaultChannelsMinusAny, ...channelOptions]
-    : defaultChannelOptions;
 
-  // Filter channels based on the filterText
+  let channelsMap = new Map<string, TimeOption>(
+    defaultChannelOptions.map((option) => [option.id, option])
+  );
+
+  if (Array.isArray(channelOptions)) {
+    channelOptions.forEach((option) => {
+      if (!channelsMap.has(option.id)) {
+        // Prevent duplicates
+        channelsMap.set(option.id, option);
+      }
+    });
+  }
+
+  const channels = Array.from(channelsMap.values());
+
+  // Filter channels based on the filterText, but keep "Any Channel" always at the top
   const filteredChannels = [
     defaultChannelOptions[0],
-    ...channels.filter((channel) =>
-      channel.id.toLowerCase().includes(filterText.toLowerCase())
+    ...channels.filter(
+      (channel) =>
+        channel.id !== "Any Channel" &&
+        channel.id.toLowerCase().includes(filterText.toLowerCase())
     ),
   ];
 
@@ -152,14 +174,16 @@ const ChannelFilter: React.FC<FilterProps> = ({
                   key={option.parent_url ?? "any"}
                   onClick={async () => {
                     setIsOpen(false);
-                    const { data, error } = await supabase.rpc(
-                      "increment",
-                      option.id
-                    );
                     setFilterText("");
                   }}
                   className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
-                  href={constructHref(query, time, option.parent_url, username)}
+                  href={constructHref(
+                    query,
+                    time,
+                    option.parent_url,
+                    fid,
+                    userFid ?? null
+                  )}
                 >
                   <div className="flex flex-row items-center space-x-3">
                     {option.image_url ? (

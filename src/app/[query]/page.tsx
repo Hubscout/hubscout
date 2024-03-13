@@ -7,6 +7,9 @@ import TimeFilter from "@/components/TimeFilter";
 import ChannelFilter from "@/components/ChannelFilter";
 import useSWR from "swr";
 import UsernameFilter from "@/components/UsernameFilter";
+import { useProfile } from "@farcaster/auth-kit";
+import FarcasterProfileInfo from "../FarcasterProfileInfo";
+import { parse } from "path";
 
 export const revalidate = 60 * 30; // 5 minutes
 export const maxDuration = 10;
@@ -21,46 +24,44 @@ export default async function Page({ params, searchParams }: PageProps) {
     | "three_months"
     | null;
   let channel = searchParams?.channel as string | null;
-  let username = searchParams?.username as string | null;
+  let fid = searchParams?.fid as string | null;
+  let userFid = searchParams?.userFid as string | null;
   const casts = await fetchCastResults(
     encodeURIComponent(query),
     time,
     channel,
-    username
+    fid,
+    userFid
   );
+
   query = decodeURIComponent(query).split("?")[0];
-  username = username ? decodeURIComponent(username) : null;
+  fid = fid ? decodeURIComponent(fid) : null;
   channel = channel ? decodeURIComponent(channel) : null;
 
   return (
     <div
-      className="w-screen p-2 col-fs-c bg-white"
+      className="w-screen min-h-screen p-2 col-fs-c bg-zinc-200"
       style={{ paddingTop: "5vw" }}
     >
       <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
         <Title />
-        <SearchBar
-          initValue={query}
-          time={time}
-          channel={channel}
-          username={username}
-        />
+        <SearchBar initValue={query} time={time} channel={channel} fid={fid} />
         <div className="flex w-full space-x-3">
           <TimeFilter
             query={params.query}
             time={time}
             channel={channel}
-            username={username}
+            fid={fid}
           />
           <ChannelFilter
             query={params.query}
             channel={channel}
             time={time}
-            username={username}
+            fid={fid}
           />
           <UsernameFilter
             query={params.query}
-            username={username}
+            fid={fid}
             time={time}
             channel={channel}
           />

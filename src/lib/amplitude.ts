@@ -24,5 +24,4 @@ export async function sendEventToAmplitude(
       },
     },
   );
-  console.log("addData", addData);
 }

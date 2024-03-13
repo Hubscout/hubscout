@@ -3,6 +3,7 @@ import classNames from "classnames";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { constructHref } from "./UsernameFilter";
+import FarcasterProfileInfo from "@/app/FarcasterProfileInfo";
 
 interface TimeOption {
   label: string;
@@ -14,7 +15,7 @@ const timeOptions: TimeOption[] = [
   { label: "Past Day", value: "day" },
   { label: "Past Week", value: "week" },
   { label: "Past Month", value: "month" },
-  {label: "Past Three Months", value: "three_months" },
+  { label: "Past Three Months", value: "three_months" },
   { label: "Past Year", value: "year" },
 ];
 
@@ -22,18 +23,16 @@ interface FilterProps {
   query: string;
   time?: string | null;
   channel?: string | null;
-  username?: string | null;
+  fid?: string | null;
 }
 
-const TimeFilter: React.FC<FilterProps> = ({
-  query,
-  time,
-  channel,
-  username,
-}) => {
+const TimeFilter: React.FC<FilterProps> = ({ query, time, channel, fid }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const {
+    isAuthenticated,
+    profile: { username, fid: userFid, bio, displayName, pfpUrl },
+  } = FarcasterProfileInfo();
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -100,7 +99,8 @@ const TimeFilter: React.FC<FilterProps> = ({
                   query,
                   option.value,
                   channel as any,
-                  username
+                  fid,
+                  userFid
                 )}
               >
                 {option.label}

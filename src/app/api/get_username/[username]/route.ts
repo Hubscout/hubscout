@@ -10,7 +10,7 @@ export async function GET(
   }
   try {
     const response = await axios.get(
-      `https://api.neynar.com/v1/farcaster/user-by-username?username=${username}&viewer_fid=3`,
+      `https://api.neynar.com/v2/farcaster/user/bulk?fids=${username}&viewer_fid=3`,
       {
         headers: {
           accept: "application/json",
@@ -20,7 +20,7 @@ export async function GET(
     );
 
     if (response.data) {
-      return NextResponse.json(response.data.result.user);
+      return NextResponse.json(response.data.users[0]);
     } else {
       return NextResponse.json([], { status: 500 });
     }

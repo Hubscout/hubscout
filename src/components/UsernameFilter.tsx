@@ -1,5 +1,6 @@
 "use client";
 
+import FarcasterProfileInfo from "@/app/FarcasterProfileInfo";
 import { fetcher } from "@/lib/neynar";
 import supabase from "@/lib/supabase";
 import axios from "axios";
@@ -11,7 +12,8 @@ export const constructHref = (
   query: string,
   time: string | null | undefined,
   channel: string | null | undefined,
-  username: string | null | undefined
+  fid: string | null | undefined,
+  userFid: number | null | undefined
 ) => {
   // Encode the query part of the URL to handle special characters
   // Start constructing the URL with the encoded query
@@ -23,7 +25,9 @@ export const constructHref = (
   // Add time, channel, and username to the queryParams array if they exist
   if (time) queryParams.push(`time=${encodeURIComponent(time)}`);
   if (channel) queryParams.push(`channel=${encodeURIComponent(channel)}`);
-  if (username) queryParams.push(`username=${encodeURIComponent(username)}`);
+  if (fid) queryParams.push(`fid=${encodeURIComponent(fid)}`);
+  if (userFid)
+    queryParams.push(`userFid=${encodeURIComponent(userFid.toString())}`);
 
   // Join all query parameters with '&' and prepend with '?' if there are any parameters
   if (queryParams.length > 0) {
@@ -37,19 +41,22 @@ interface FilterProps {
   query: string;
   time?: string | null;
   channel?: string | null;
-  username?: string | null;
+  fid?: string | null;
 }
 
 const UsernameFilter: React.FC<FilterProps> = ({
   query,
   time,
   channel,
-  username,
+  fid,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [usernameText, setUsernameText] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const {
+    isAuthenticated,
+    profile: { username, fid: userFid, bio, displayName, pfpUrl },
+  } = FarcasterProfileInfo();
   const [usernameData, setUsernameData] = useState<any>([]);
   const { data: usernames, error } = useSWR(
     `/api/get_usernames/${usernameText}`,
@@ -59,19 +66,19 @@ const UsernameFilter: React.FC<FilterProps> = ({
     }
   );
 
-  const getUser = async (username: string) => {
-    const usernameInfo = await axios.get(`/api/get_username/${username}`);
+  const getUser = async (fid: string) => {
+    const usernameInfo = await axios.get(`/api/get_username/${fid}`);
 
     if (usernameInfo.data) setUsernameData(usernameInfo.data);
   };
 
   useEffect(() => {
-    if (username) {
-      getUser(username);
+    if (fid) {
+      getUser(fid);
     } else {
       setUsernameData("");
     }
-  }, [username]);
+  }, [fid]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -92,7 +99,7 @@ const UsernameFilter: React.FC<FilterProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const defaultUser = { fid: null, username: null, pfp: { url: null } };
+  const defaultUser = { fid: null, username: null, pfp_url: null };
 
   let usernameOptions =
     Array.isArray(usernames) && usernameText
@@ -111,9 +118,9 @@ const UsernameFilter: React.FC<FilterProps> = ({
           onClick={toggleDropdown}
         >
           <div className="flex flex-row items-center space-x-4">
-            {usernameData && usernameData.pfp && usernameData.pfp.url ? (
+            {usernameData && usernameData.pfp_url && usernameData.pfp_url ? (
               <img
-                src={usernameData.pfp.url}
+                src={usernameData.pfp_url}
                 className="w-5 h-5 rounded-full"
               />
             ) : null}
@@ -162,15 +169,21 @@ const UsernameFilter: React.FC<FilterProps> = ({
                   setUsernameText("");
                 }}
                 className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
-                href={constructHref(query, time, channel, user.username)}
+                href={constructHref(
+                  query,
+                  time,
+                  channel,
+                  user.fid,
+                  userFid ?? null
+                )}
               >
                 <div
                   key={user.fid}
                   className="flex flex-row items-center space-x-3"
                 >
-                  {user.pfp.url ? (
+                  {user.pfp_url ? (
                     <img
-                      src={user.pfp.url}
+                      src={user.pfp_url}
                       alt=""
                       key={user.fid}
                       className="w-6 h-6 rounded-full object-cover"
