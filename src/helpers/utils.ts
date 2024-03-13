@@ -9,3 +9,11 @@ export const getUserId = () => {
   }
   return userId;
 };
+
+export const formatNeynarCast = (cast: any) => {
+  return {
+    ...cast,
+    display_name: cast.author?.displayName,
+    username: cast.author?.username,
+  };
+};

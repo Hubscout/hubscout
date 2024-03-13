@@ -44,14 +44,14 @@ interface FilterProps {
   query: string;
   time?: string | null;
   channel?: string | null;
-  username?: string | null;
+  fid?: string | null;
 }
 
 const ChannelFilter: React.FC<FilterProps> = ({
   query,
   time,
   channel,
-  username,
+  fid,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filterText, setFilterText] = useState("");
@@ -77,16 +77,29 @@ const ChannelFilter: React.FC<FilterProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  let defaultChannelsMinusAny = defaultChannelOptions.slice(1);
-  let channels = Array.isArray(channelOptions)
-    ? [...defaultChannelsMinusAny, ...channelOptions]
-    : defaultChannelOptions;
 
-  // Filter channels based on the filterText
+  let channelsMap = new Map<string, TimeOption>(
+    defaultChannelOptions.map((option) => [option.id, option])
+  );
+
+  if (Array.isArray(channelOptions)) {
+    channelOptions.forEach((option) => {
+      if (!channelsMap.has(option.id)) {
+        // Prevent duplicates
+        channelsMap.set(option.id, option);
+      }
+    });
+  }
+
+  const channels = Array.from(channelsMap.values());
+
+  // Filter channels based on the filterText, but keep "Any Channel" always at the top
   const filteredChannels = [
     defaultChannelOptions[0],
-    ...channels.filter((channel) =>
-      channel.id.toLowerCase().includes(filterText.toLowerCase())
+    ...channels.filter(
+      (channel) =>
+        channel.id !== "Any Channel" &&
+        channel.id.toLowerCase().includes(filterText.toLowerCase())
     ),
   ];
 
@@ -159,7 +172,7 @@ const ChannelFilter: React.FC<FilterProps> = ({
                     setFilterText("");
                   }}
                   className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
-                  href={constructHref(query, time, option.parent_url, username)}
+                  href={constructHref(query, time, option.parent_url, fid)}
                 >
                   <div className="flex flex-row items-center space-x-3">
                     {option.image_url ? (

@@ -14,7 +14,7 @@ const timeOptions: TimeOption[] = [
   { label: "Past Day", value: "day" },
   { label: "Past Week", value: "week" },
   { label: "Past Month", value: "month" },
-  {label: "Past Three Months", value: "three_months" },
+  { label: "Past Three Months", value: "three_months" },
   { label: "Past Year", value: "year" },
 ];
 
@@ -22,15 +22,10 @@ interface FilterProps {
   query: string;
   time?: string | null;
   channel?: string | null;
-  username?: string | null;
+  fid?: string | null;
 }
 
-const TimeFilter: React.FC<FilterProps> = ({
-  query,
-  time,
-  channel,
-  username,
-}) => {
+const TimeFilter: React.FC<FilterProps> = ({ query, time, channel, fid }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -96,12 +91,7 @@ const TimeFilter: React.FC<FilterProps> = ({
                 key={option.value ?? "any"}
                 onClick={() => setIsOpen(false)}
                 className="block px-1 py-2 text-sm text-left font-medium font-slate-700 opacity-75 break-words w-full hover:bg-slate-200 rounded-md"
-                href={constructHref(
-                  query,
-                  option.value,
-                  channel as any,
-                  username
-                )}
+                href={constructHref(query, option.value, channel as any, fid)}
               >
                 {option.label}
               </Link>

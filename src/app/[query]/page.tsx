@@ -21,15 +21,15 @@ export default async function Page({ params, searchParams }: PageProps) {
     | "three_months"
     | null;
   let channel = searchParams?.channel as string | null;
-  let username = searchParams?.username as string | null;
+  let fid = searchParams?.fid as string | null;
   const casts = await fetchCastResults(
     encodeURIComponent(query),
     time,
     channel,
-    username
+    fid
   );
   query = decodeURIComponent(query).split("?")[0];
-  username = username ? decodeURIComponent(username) : null;
+  fid = fid ? decodeURIComponent(fid) : null;
   channel = channel ? decodeURIComponent(channel) : null;
 
   return (
@@ -39,28 +39,23 @@ export default async function Page({ params, searchParams }: PageProps) {
     >
       <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
         <Title />
-        <SearchBar
-          initValue={query}
-          time={time}
-          channel={channel}
-          username={username}
-        />
+        <SearchBar initValue={query} time={time} channel={channel} fid={fid} />
         <div className="flex w-full space-x-3">
           <TimeFilter
             query={params.query}
             time={time}
             channel={channel}
-            username={username}
+            fid={fid}
           />
           <ChannelFilter
             query={params.query}
             channel={channel}
             time={time}
-            username={username}
+            fid={fid}
           />
           <UsernameFilter
             query={params.query}
-            username={username}
+            fid={fid}
             time={time}
             channel={channel}
           />

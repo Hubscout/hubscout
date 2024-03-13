@@ -45,7 +45,7 @@ export default async function handler(
 */
 
       const cast = (await _fetchResultForCast(hash as string)) as any;
-      console.log({ cast });
+
       if (!cast) {
         return res.status(404).send("Cast not found");
       }
