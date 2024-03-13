@@ -141,4 +141,4 @@ export async function _fetchResultForHash(hash_partial: string) {
   return cast;
 }
 
-const nResults = 75;
+const nResults = 100;
