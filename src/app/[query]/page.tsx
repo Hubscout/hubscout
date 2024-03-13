@@ -7,6 +7,9 @@ import TimeFilter from "@/components/TimeFilter";
 import ChannelFilter from "@/components/ChannelFilter";
 import useSWR from "swr";
 import UsernameFilter from "@/components/UsernameFilter";
+import { useProfile } from "@farcaster/auth-kit";
+import FarcasterProfileInfo from "../FarcasterProfileInfo";
+import { parse } from "path";
 
 export const revalidate = 60 * 30; // 5 minutes
 export const maxDuration = 10;
@@ -22,12 +25,15 @@ export default async function Page({ params, searchParams }: PageProps) {
     | null;
   let channel = searchParams?.channel as string | null;
   let fid = searchParams?.fid as string | null;
+  let userFid = searchParams?.userFid as string | null;
   const casts = await fetchCastResults(
     encodeURIComponent(query),
     time,
     channel,
-    fid
+    fid,
+    userFid
   );
+
   query = decodeURIComponent(query).split("?")[0];
   fid = fid ? decodeURIComponent(fid) : null;
   channel = channel ? decodeURIComponent(channel) : null;

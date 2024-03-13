@@ -11,6 +11,7 @@ export async function fetchCastResults(
   timeQuery?: "day" | "week" | "month" | "three_months" | "year" | null,
   channel?: string | null,
   author?: string | null,
+  fid?: string | null,
 ): Promise<CastWithPossibleParent[]> {
   try {
     // Determine the start timestamp based on the time query
@@ -50,7 +51,7 @@ export async function fetchCastResults(
       authorfid: author,
       query_embedding: queryEmbedding,
       match_count: nResults,
-      userfid: 9134,
+      userfid: fid ? parseInt(fid) : 3,
       optionaltimestamp: startTime,
       optionalparenturl: channel,
     };
@@ -59,22 +60,6 @@ export async function fetchCastResults(
       "match_casts_adaptive",
       params,
     );
-
-    // // grab the results for the search
-    // const results = await collection.query({
-    //   nResults,
-    //   queryTexts: [],
-    //   where: startTime
-    //     ? // timestamp: { $gte: startTime.getTime() },
-    //       // username: { $eq: "dwr" },
-    //       {
-    //         timestamp: {
-    //           $gt: startTime.getTime(),
-    //         },
-    //       }
-    //     : undefined,
-    // });
-    // console.log("results", results);
 
     // if there's an error, return an empty array
     if (error) {

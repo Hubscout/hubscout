@@ -1,5 +1,6 @@
 "use client";
 
+import FarcasterProfileInfo from "@/app/FarcasterProfileInfo";
 import { fetcher } from "@/lib/neynar";
 import supabase from "@/lib/supabase";
 import axios from "axios";
@@ -13,6 +14,10 @@ export const constructHref = (
   channel: string | null | undefined,
   fid: string | null | undefined
 ) => {
+  const {
+    isAuthenticated,
+    profile: { username, fid: userFid, bio, displayName, pfpUrl },
+  } = FarcasterProfileInfo();
   // Encode the query part of the URL to handle special characters
   // Start constructing the URL with the encoded query
   let url = `/${query}`;
@@ -24,7 +29,7 @@ export const constructHref = (
   if (time) queryParams.push(`time=${encodeURIComponent(time)}`);
   if (channel) queryParams.push(`channel=${encodeURIComponent(channel)}`);
   if (fid) queryParams.push(`fid=${encodeURIComponent(fid)}`);
-
+  if (userFid) queryParams.push(`userFid=${encodeURIComponent(userFid)}`);
   // Join all query parameters with '&' and prepend with '?' if there are any parameters
   if (queryParams.length > 0) {
     url += `?${queryParams.join("&")}`;
@@ -61,7 +66,6 @@ const UsernameFilter: React.FC<FilterProps> = ({
 
   const getUser = async (fid: string) => {
     const usernameInfo = await axios.get(`/api/get_username/${fid}`);
-
 
     if (usernameInfo.data) setUsernameData(usernameInfo.data);
   };
