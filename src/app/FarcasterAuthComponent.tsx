@@ -1,7 +1,8 @@
 "use client";
-import "@/styles/index.scss";
 import "@farcaster/auth-kit/styles.css";
-import { AuthKitProvider, SignInButton } from "@farcaster/auth-kit";
+import "@/styles/index.scss";
+
+import { AuthKitProvider, SignInButton, useProfile } from "@farcaster/auth-kit";
 
 export default function FarcasterAuthComponent({
   children,
@@ -13,9 +14,10 @@ export default function FarcasterAuthComponent({
     domain: "hubscout.xyz",
     siweUri: "https://hubscout.xyz/login",
   };
+
   return (
     <AuthKitProvider config={config}>
-      <div className="absolute top-4 right-4 bg-purple-500">
+      <div className={`absolute top-4 right-4`}>
         <SignInButton />
       </div>
       {children}

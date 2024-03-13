@@ -26,7 +26,7 @@ export default async function Page() {
       />
 
       <div
-        className="w-screen h-screen p-2 col-fs-c bg-white"
+        className="w-screen h-screen p-2 col-fs-c bg-zinc-200"
         style={{ paddingTop: "5vw" }}
       >
         <div className="w-full col gap-2" style={{ maxWidth: 540 }}>

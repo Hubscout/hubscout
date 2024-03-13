@@ -30,6 +30,7 @@ export const constructHref = (
   if (channel) queryParams.push(`channel=${encodeURIComponent(channel)}`);
   if (fid) queryParams.push(`fid=${encodeURIComponent(fid)}`);
   if (userFid) queryParams.push(`userFid=${encodeURIComponent(userFid)}`);
+
   // Join all query parameters with '&' and prepend with '?' if there are any parameters
   if (queryParams.length > 0) {
     url += `?${queryParams.join("&")}`;
