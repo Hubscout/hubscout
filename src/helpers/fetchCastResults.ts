@@ -6,6 +6,7 @@ import supabase from "@/lib/supabase";
 import OpenAI from "openai";
 import { formatNeynarCast } from "./utils";
 export const maxDuration = 10; // This function can run for a maximum of 5 min
+export const revalidate = 60 * 30; // 30 minutes
 export async function fetchCastResults(
   query: string,
   timeQuery?: "day" | "week" | "month" | "three_months" | "year" | null,
