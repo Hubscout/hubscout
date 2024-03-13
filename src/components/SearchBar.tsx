@@ -4,19 +4,34 @@ import { useRouter } from "next13-progressbar";
 import classNames from "classnames";
 import { useState } from "react";
 import { arrow } from "@/svg";
-import { constructHref } from "./Filter";
+import { constructHref } from "./UsernameFilter";
+import { sendEventToAmplitude } from "@/lib/amplitude";
+import { getUserId } from "@/helpers/utils";
+import FarcasterProfileInfo from "@/app/FarcasterProfileInfo";
 
-export function SearchBar({ initValue, time, contains }: SearchBarProps) {
+export function SearchBar({ initValue, time, channel, fid }: SearchBarProps) {
   const [value, setValue] = useState<string>(decodeURIComponent(initValue));
   const router = useRouter();
+  const {
+    isAuthenticated,
+    profile: { username, fid: userFid, bio, displayName, pfpUrl },
+  } = FarcasterProfileInfo();
 
-  function onSubmit(
+  async function onSubmit(
     e:
       | React.FormEvent<HTMLFormElement>
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     e.preventDefault();
-    router.push(`${constructHref(value, time, contains)}`);
+    try {
+      const userId = getUserId();
+      await sendEventToAmplitude(userId, "search", {
+        query: decodeURIComponent(value),
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    router.push(`${constructHref(value, time, channel, fid, userFid ?? null)}`);
   }
 
   return (
@@ -47,5 +62,6 @@ export function SearchBar({ initValue, time, contains }: SearchBarProps) {
 export interface SearchBarProps {
   initValue: string;
   time?: string | null;
-  contains?: string | null;
+  channel?: string | null;
+  fid?: string | null;
 }

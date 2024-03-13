@@ -9,9 +9,6 @@ export function CastSnippet({
   username,
   timestamp,
   text,
-  numLikes,
-  numReplies,
-  numRecasts,
   showRail,
 }: CastSnippetProps) {
   return (
@@ -23,8 +20,17 @@ export function CastSnippet({
       }}
     >
       <div className="col-fs-c w-9 gap-2 h-full">
-        <img className="h-9 w-9 object-cover rounded-full" alt="@" src={avatar} />
-        {showRail && <div style={{ width: 2 }} className="rounded-full flex-1 mb-2 bg-slate-100" />}
+        <img
+          className="h-9 w-9 object-cover rounded-full"
+          alt="@"
+          src={avatar}
+        />
+        {showRail && (
+          <div
+            style={{ width: 2 }}
+            className="rounded-full flex-1 mb-2 bg-slate-100"
+          />
+        )}
       </div>
       <div className="w-full col gap-1">
         <span className="row gap-1 text-slate-700 leading-5 text-sm">
@@ -40,17 +46,7 @@ export function CastSnippet({
           {text}
         </p>
         <div />
-        <div className="row text-sm gap-4 opacity-50 font-medium text-slate-700">
-          <div className="svg-small row-c-c gap-1">
-            {like} {numLikes}
-          </div>
-          <div className="svg-small row-c-c gap-1">
-            {recast} {numRecasts}
-          </div>
-          <div className="svg-small row-c-c gap-1">
-            {reply} {numReplies}
-          </div>
-        </div>
+        <div className="row text-sm gap-4 opacity-50 font-medium text-slate-700"></div>
         <div />
         <div />
       </div>
@@ -64,8 +60,5 @@ interface CastSnippetProps {
   username?: string;
   timestamp?: string;
   text?: string;
-  numLikes?: number;
-  numReplies?: number;
-  numRecasts?: number;
   showRail?: boolean;
 }

@@ -9,6 +9,9 @@ const nextConfig = {
     PROFILES_NAME: process.env.PROFILES_NAME,
     COLLECTION_NAME: process.env.COLLECTION_NAME,
     URL: process.env.URL,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_KEY: process.env.SUPABASE_KEY,
+    NEXT_PUBLIC_AMPLITUDE_API: process.env.NEXT_PUBLIC_AMPLITUDE_API,
   },
 };
 
