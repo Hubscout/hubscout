@@ -12,7 +12,7 @@ import FarcasterProfileInfo from "../FarcasterProfileInfo";
 import { parse } from "path";
 
 export const revalidate = 60 * 30; // 5 minutes
-export const maxDuration = 10;
+export const maxDuration = 60;
 
 export default async function Page({ params, searchParams }: PageProps) {
   let query = params.query;
