@@ -1,5 +1,4 @@
 "use client";
-
 import { useProfile } from "@farcaster/auth-kit";
 
 const FarcasterProfileInfo = () => {
