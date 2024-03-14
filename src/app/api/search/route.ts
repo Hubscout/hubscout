@@ -2,7 +2,7 @@ import { fetchCastResults } from "@/helpers/fetchCastResults";
 import { NextRequest, NextResponse } from "next/server";
 
 export const revalidate = 60 * 30; // 30 minutes
-export const maxDuration = 10; // This function can run for a maximum of 5 min
+export const maxDuration = 60; // This function can run for a maximum of 5 min
 
 export async function GET(
   _: NextRequest,
