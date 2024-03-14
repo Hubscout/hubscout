@@ -40,7 +40,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <div
-      className="w-screen min-h-screen p-2 col-fs-c bg-zinc-200"
+      className="w-screen min-h-screen p-2 col-fs-c bg-white"
       style={{ paddingTop: "5vw" }}
     >
       <div className="w-full col gap-2" style={{ maxWidth: 540 }}>

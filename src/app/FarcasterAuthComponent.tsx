@@ -1,8 +1,9 @@
 "use client";
 import "@farcaster/auth-kit/styles.css";
 import "@/styles/index.scss";
+import { AuthKitProvider } from "@farcaster/auth-kit";
 
-import { AuthKitProvider, SignInButton, useProfile } from "@farcaster/auth-kit";
+import FarcasterSignIn from "./FarcasterSignIn";
 
 export default function FarcasterAuthComponent({
   children,
@@ -17,8 +18,8 @@ export default function FarcasterAuthComponent({
 
   return (
     <AuthKitProvider config={config}>
-      <div className={`absolute top-4 right-4`}>
-        <SignInButton />
+      <div className={`fixed top-4 right-4 bg-purple-500`}>
+        <FarcasterSignIn />
       </div>
       {children}
     </AuthKitProvider>
