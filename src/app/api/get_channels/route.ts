@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import supabase from "@/lib/supabase";
-import { channel } from "diagnostics_channel";
 
+export const revalidate = 60 * 30; // 5 minutes
 export async function GET() {
   try {
     const { data, error } = await supabase.from("channels").select("*");

@@ -5,6 +5,13 @@ import { subDays, subMonths, subWeeks, subYears } from "date-fns";
 import supabase from "@/lib/supabase";
 import OpenAI from "openai";
 import { formatNeynarCast } from "./utils";
+import { randomUUID } from "crypto";
+
+export interface SearchResponse {
+  casts: CastWithPossibleParent[];
+  requestId: string;
+}
+
 export const maxDuration = 10; // This function can run for a maximum of 5 min
 export const revalidate = 60 * 30; // 30 minutes
 export async function fetchCastResults(
@@ -13,92 +20,149 @@ export async function fetchCastResults(
   channel?: string | null,
   author?: string | null,
   fid?: string | null,
-): Promise<CastWithPossibleParent[]> {
-  try {
-    // Determine the start timestamp based on the time query
-    let startTime: Date | null = null;
+  limit?: number | null,
+  offset?: number | null,
+): Promise<SearchResponse> {
+  const startTimeRequest = Date.now();
+  const requestId = randomUUID();
+  let startTime: Date | null = null;
 
-    if (timeQuery) {
-      const now = new Date();
-      switch (timeQuery) {
-        case "day":
-          startTime = subDays(now, 1);
-          break;
-        case "week":
-          startTime = subWeeks(now, 1);
-          break;
-        case "month":
-          startTime = subMonths(now, 1);
-          break;
-        case "three_months":
-          startTime = subMonths(now, 3);
-          break;
-        case "year":
-          startTime = subYears(now, 1);
-          break;
-        default:
-          startTime = null;
-      }
+  if (timeQuery) {
+    const now = new Date();
+    switch (timeQuery) {
+      case "day":
+        startTime = subDays(now, 1);
+        break;
+      case "week":
+        startTime = subWeeks(now, 1);
+        break;
+      case "month":
+        startTime = subMonths(now, 1);
+        break;
+      case "three_months":
+        startTime = subMonths(now, 3);
+        break;
+      case "year":
+        startTime = subYears(now, 1);
+        break;
+      default:
+        startTime = null;
     }
-    let finishedQuery = decodeURIComponent(query);
+  }
+  let finishedQuery = decodeURIComponent(query);
+  let queryEmbedding = null;
+  try {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY as string });
     const embedding = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: finishedQuery,
       dimensions: 512,
     });
-    const queryEmbedding = embedding.data[0].embedding;
+    queryEmbedding = embedding.data[0].embedding;
 
-    // const params = {
-    //   authorfid: author ? parseInt(author) : null,
-    //   query_embedding: queryEmbedding,
-    //   match_count: nResults,
-    //   userfid: fid ? parseInt(fid) : 3,
-    //   optionaltimestamp: startTime,
-    //   optionalparenturl: channel ? decodeURIComponent(channel) : null,
-    //   query_stext: finishedQuery,
-    // };
-
-    // const { data, error } = await supabase.rpc(
-    //   "match_casts_adaptive_hybrid",
-    //   params,
-    // );
-
-    // Call hybrid_search Postgres function via RPC
     let { data, error } = await supabase.rpc("hybrid_search", {
       query_text: finishedQuery,
       query_embedding: queryEmbedding,
-      match_count: 100,
+      match_count: limit ?? nResults,
       optional_timestamp: startTime,
+      offset_count: offset ?? 0,
       optional_parent_url: channel ? decodeURIComponent(channel) : null,
       // userfid: fid ? parseInt(fid) : 3,
       author_fid: author ? parseInt(author) : null,
     });
-    if (data) {
-      data.map((d: any) => {
-        d.hash = d.hash.replace("\\", "0");
-      });
-    }
 
-    // if there's an error, return an empty array
     if (error) {
       console.log("error in fetchcast", error);
-      return [];
+      return { casts: [], requestId: requestId };
     }
 
-    if (!data || !data.length) return [];
-    // grab the casts + their replies from the hashes
-    let cast_ids = data.map((d: any) => d.hash);
-    // fetch the results
-    const cast_results = await Promise.all(
-      cast_ids.map(_fetchResultForHash),
+    if (!data || !data.length) return { casts: [], requestId: requestId };
+
+    let cast_ids = data.map((d: any) =>
+      d.hash ? d.hash.replace("\\", "0") : null
     );
 
-    // return the results
-    return cast_results.filter((f) => f !== null) as CastWithPossibleParent[];
+    const castsData = await neynar.fetchBulkCasts(cast_ids);
+    if (
+      !castsData || !castsData.result || !castsData.result.casts ||
+      !castsData.result.casts.length
+    ) {
+      return { casts: [], requestId: requestId };
+    }
+
+    let cast_results = castsData.result.casts as any[];
+
+    let parentHashes = Array.from(
+      new Set(
+        cast_results.map((c) =>
+          c.thread_hash && c.thread_hash !== c.hash ? c.thread_hash : null
+        ).filter(Boolean),
+      ),
+    );
+
+    let parentCastsData = await neynar.fetchBulkCasts(parentHashes);
+    let parentCasts = parentCastsData.result.casts as any[];
+    let parentCastsMap = new Map(parentCasts.map((c) => [c.hash, c]));
+
+    cast_results.forEach((cast) => {
+      if (cast.thread_hash && parentCastsMap.has(cast.thread_hash)) {
+        cast.parent = parentCastsMap.get(cast.thread_hash);
+      } else {
+        cast.parent = null;
+      }
+    });
+
+    const endTimeRequest = Date.now();
+    const totalDuration = endTimeRequest - startTimeRequest;
+    console.log("Total duration", totalDuration, "ms");
+    try {
+      const addRequest = await supabase.from("requests").insert(
+        {
+          id: requestId,
+          feedback: 0,
+          results: cast_results,
+          embedding: queryEmbedding,
+          text: finishedQuery,
+          time: totalDuration,
+          timestamp: startTime,
+          channel: channel,
+          user_fid: fid,
+          author_fid: author,
+        },
+      );
+    } catch (e) {
+      console.log("error in addRequest", e);
+    }
+
+    return {
+      casts: cast_results,
+      requestId: requestId,
+    };
   } catch (e) {
+    //still log the error
+    const endTimeRequest = Date.now();
+    const totalDuration = endTimeRequest - startTimeRequest;
+    try {
+      const addRequest = await supabase.from("requests").insert(
+        {
+          id: requestId,
+          feedback: 0,
+          results: [],
+          embedding: queryEmbedding,
+          text: finishedQuery,
+          time: totalDuration,
+          timestamp: startTime,
+          channel: channel,
+          user_fid: fid,
+          author_fid: author,
+        },
+      );
+    } catch (e) {
+      console.log("error in addRequest", e);
+    }
+
     console.log("error in fetchcast", e);
-    return [];
+    return { casts: [], requestId: requestId };
   }
 }
 
@@ -106,11 +170,19 @@ export async function _fetchResultForCast(hash_partial: string) {
   // reconstruct the hash
   const hash = `${hash_partial}`;
 
-  // grab the cast in question
-  const neynarResult = await neynar.lookUpCastByHash(hash);
-  const cast: CastWithPossibleParent = neynarResult?.result?.cast ?? null;
+  let attempt = 0;
+  const maxAttempts = 3; // You can adjust the max attempts as needed
 
-  return cast;
+  while (attempt < maxAttempts) {
+    try {
+      // grab the cast in question
+      const neynarResult = await neynar.lookUpCastByHash(hash);
+      const cast: CastWithPossibleParent = neynarResult?.result?.cast ?? null;
+      return cast;
+    } catch (error: any) {
+      return null;
+    }
+  }
 }
 
 export async function _fetchResultForHash(hash_partial: string) {
@@ -120,39 +192,25 @@ export async function _fetchResultForHash(hash_partial: string) {
 
   if (!cast) return null;
 
-  // // grab the cast in question
-  // const castFetch = await supabase.from("casts").select(
-  //   "*",
-  // )
-  //   .eq("hash", hash) as any;
-
-  // let cast = castFetch.data[0];
-  // console.log("cast", cast);
-  // // if there's no cast, return null
-  // if (!cast) return null;
-
-  // const authorFetch = await supabase.from("fnames").select("*").eq(
-  //   "fid",
-  //   cast.fid,
-  // );
-
-  // if (authorFetch && authorFetch.data && authorFetch.data.length) {
-  //   cast.author = authorFetch.data[0];
-  //   if (cast.author && cast.author.pfp && cast.author.pfp.url) {
-  //     cast.author.pfp = cast.author.pfp.url;
-  //   }
-  // }
-
   // grab the thread hash
   const threadHash = cast?.threadHash;
 
   // if there's a parent_hash, grab the parent
   if (cast?.hash && threadHash !== cast?.hash) {
-    cast.parent = formatNeynarCast(
-      await neynar
-        .lookUpCastByHash(threadHash)
-        .then((r) => r.result?.cast ?? undefined),
-    );
+    let attempt = 0;
+    const maxAttempts = 3;
+
+    while (attempt < maxAttempts) {
+      try {
+        cast.parent = formatNeynarCast(
+          await neynar
+            .lookUpCastByHash(threadHash)
+            .then((r) => r.result?.cast ?? undefined),
+        );
+      } catch (error: any) {
+        console.log("error in fetchResultForHash", error);
+      }
+    }
   }
 
   // return the cast

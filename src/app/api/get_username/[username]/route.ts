@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
+export const revalidate = 60 * 30; // 5 minutes
 export async function GET(
   _: NextRequest,
   { params: { username } }: { params: { username: string } },

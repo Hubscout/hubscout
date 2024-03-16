@@ -1,7 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { getRelativeTime } from "@/helpers/getRelativeTime";
+import { imageList } from "@/helpers/utils";
 import { like, recast, reply } from "@/svg";
+import { FarcasterEmbed } from "react-farcaster-embed";
+import "react-farcaster-embed/dist/styles.css"; // include default styles or write your own
 
 export function CastSnippet({
   avatar,
@@ -10,7 +13,21 @@ export function CastSnippet({
   timestamp,
   text,
   showRail,
+  embeds,
 }: CastSnippetProps) {
+  // Filter embeds to include only those whose URL ends with one of the image extensions
+  let imageEmbeds = embeds
+    ? embeds.filter((embed) => {
+        // Extract the URL from the embed object
+        const url = embed.url;
+        if (!url) return false;
+        // Check if the URL ends with one of the image extensions (case-insensitive)
+        return imageList.some((extension) =>
+          url.toLowerCase().endsWith(extension)
+        );
+      })
+    : [];
+
   return (
     <div
       className="gap-3 w-full"
@@ -39,12 +56,20 @@ export function CastSnippet({
             @{username} • {getRelativeTime(timestamp ?? 0)}
           </span>
         </span>
+        {imageEmbeds.length > 0 && (
+          <img
+            src={imageEmbeds[0].url} // Use the first image URL
+            alt="Embedded content"
+            className="max-w-full max-h-72 rounded-lg " // Adjust styling as needed
+          />
+        )}
         <p
           className="text-sm font-medium font-slate-700 opacity-75 break-words w-full"
           style={{ wordBreak: "break-word" }}
         >
           {text}
         </p>
+
         <div />
         <div className="row text-sm gap-4 opacity-50 font-medium text-slate-700"></div>
         <div />
@@ -54,6 +79,9 @@ export function CastSnippet({
   );
 }
 
+interface Embeds {
+  url: string;
+}
 interface CastSnippetProps {
   avatar?: string;
   displayName?: string;
@@ -61,4 +89,5 @@ interface CastSnippetProps {
   timestamp?: string;
   text?: string;
   showRail?: boolean;
+  embeds?: Embeds[];
 }

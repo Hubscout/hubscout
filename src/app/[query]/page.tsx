@@ -10,6 +10,7 @@ import UsernameFilter from "@/components/UsernameFilter";
 import { useProfile } from "@farcaster/auth-kit";
 import FarcasterProfileInfo from "../FarcasterProfileInfo";
 import { parse } from "path";
+import Feedback from "@/components/Feedback";
 
 export const revalidate = 60 * 30; // 5 minutes
 export const maxDuration = 60;
@@ -26,13 +27,16 @@ export default async function Page({ params, searchParams }: PageProps) {
   let channel = searchParams?.channel as string | null;
   let fid = searchParams?.fid as string | null;
   let userFid = searchParams?.userFid as string | null;
-  const casts = await fetchCastResults(
+  const castsResult = await fetchCastResults(
     encodeURIComponent(query),
     time,
     channel,
     fid,
     userFid
   );
+  const requestId = castsResult.requestId;
+
+  const casts = castsResult.casts ?? [];
 
   query = decodeURIComponent(query).split("?")[0];
   fid = fid ? decodeURIComponent(fid) : null;
@@ -43,6 +47,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       className="w-screen min-h-screen p-2 col-fs-c bg-white"
       style={{ paddingTop: "5vw" }}
     >
+      <Feedback requestId={requestId} />
       <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
         <Title />
         <SearchBar initValue={query} time={time} channel={channel} fid={fid} />

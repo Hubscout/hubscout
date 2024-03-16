@@ -10,6 +10,8 @@ export const getUserId = () => {
   return userId;
 };
 
+export const imageList = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
+
 export const formatNeynarCast = (cast: any) => {
   return {
     ...cast,
