@@ -14,13 +14,8 @@ export function Cast({ parent, ...cast }: CastWithPossibleParent) {
 
   // need to force the author types for now -- something's fucked with the types
   const first_author = first_cast.author as any;
-
   const second_author = (second_cast?.author as any) ?? null;
-  if (second_cast && first_cast) {
-    console.log("first", first_cast);
-    console.log("second", second_cast);
-    console.log("cast", first_cast.hash === second_cast.hash);
-  }
+
   const firstProps = {
     avatar: first_author.pfp_url as any,
     displayName: first_author.display_name,
@@ -41,15 +36,14 @@ export function Cast({ parent, ...cast }: CastWithPossibleParent) {
   };
 
   return (
-    // <Link
-    //   target="_blank"
-    //   // href={`https://warpcast.com/${first_author.username}/${first_cast.hash.slice(0, 8)}`}
-    //   className="border-2 border-slate-100 cursor-pointer hover:border-slate-200 w-full p-3 rounded-xl"
-    // >
-    <div className="border-2 border-slate-100 cursor-pointer hover:border-slate-200 w-full p-3 rounded-xl">
+    <Link
+      target="_blank"
+      href={`https://warpcast.com/${first_author.username}/${first_cast.hash.slice(0, 8)}`}
+      className="border-2 border-slate-100 cursor-pointer hover:border-slate-200 w-full p-3 rounded-xl"
+    >
       {first_cast && <CastSnippet {...firstProps} />}
       {second_cast && <CastSnippet {...secondProps} />}
-    </div>
+    </Link>
   );
 }
 
