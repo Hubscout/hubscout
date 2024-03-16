@@ -45,22 +45,40 @@ export async function fetchCastResults(
     const embedding = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: finishedQuery,
+      dimensions: 512,
     });
     const queryEmbedding = embedding.data[0].embedding;
 
-    const params = {
-      authorfid: author,
-      query_embedding: queryEmbedding,
-      match_count: nResults,
-      userfid: fid ? parseInt(fid) : 3,
-      optionaltimestamp: startTime,
-      optionalparenturl: channel ? decodeURIComponent(channel) : null,
-    };
+    // const params = {
+    //   authorfid: author ? parseInt(author) : null,
+    //   query_embedding: queryEmbedding,
+    //   match_count: nResults,
+    //   userfid: fid ? parseInt(fid) : 3,
+    //   optionaltimestamp: startTime,
+    //   optionalparenturl: channel ? decodeURIComponent(channel) : null,
+    //   query_stext: finishedQuery,
+    // };
 
-    const { data, error } = await supabase.rpc(
-      "match_casts_adaptive",
-      params,
-    );
+    // const { data, error } = await supabase.rpc(
+    //   "match_casts_adaptive_hybrid",
+    //   params,
+    // );
+
+    // Call hybrid_search Postgres function via RPC
+    let { data, error } = await supabase.rpc("hybrid_search", {
+      query_text: finishedQuery,
+      query_embedding: queryEmbedding,
+      match_count: 100,
+      optional_timestamp: startTime,
+      optional_parent_url: channel ? decodeURIComponent(channel) : null,
+      // userfid: fid ? parseInt(fid) : 3,
+      author_fid: author ? parseInt(author) : null,
+    });
+    if (data) {
+      data.map((d: any) => {
+        d.hash = d.hash.replace("\\", "0");
+      });
+    }
 
     // if there's an error, return an empty array
     if (error) {
@@ -86,7 +104,7 @@ export async function fetchCastResults(
 
 export async function _fetchResultForCast(hash_partial: string) {
   // reconstruct the hash
-  const hash = `0x${hash_partial}`;
+  const hash = `${hash_partial}`;
 
   // grab the cast in question
   const neynarResult = await neynar.lookUpCastByHash(hash);
