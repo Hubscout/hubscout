@@ -12,15 +12,9 @@ export default async function Page({ params }: PageProps) {
   let { thread } = threadResult;
   return (
     <div className="w-screen min-h-screen p-2 bg-white">
-      {/* Title above both thread and suggested casts */}
-
       {/* Container for thread and suggested casts */}
-      <div className="w-full flex flex-row space-x-4 justify-center gap-2">
-        {/* Thread container */}
-        <div className="flex flex-col gap-2" style={{ maxWidth: 540 }}>
-          <Thread casts={thread} currentHash={hash} />
-        </div>
-        {/* Suggested Casts container, check for existence and render if not empty */}
+      <div className="w-full space-x-4 justify-center flex flex-row">
+        <Thread casts={thread} currentHash={hash} />
         <RecommendedCasts hash={hash} />
       </div>
     </div>

@@ -101,7 +101,7 @@ export function CastSnippet({
           <Video videoUrl={embed.url} />
         ) : null}
         <p
-          className="text-sm font-medium font-slate-700 opacity-75 break-words w-full p-2"
+          className="font-medium font-slate-700 opacity-75 break-words w-full p-2 text-xs md:text-sm sm:text-xs"
           style={{ wordBreak: "break-word" }}
         >
           {text}

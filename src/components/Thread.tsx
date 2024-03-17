@@ -68,5 +68,5 @@ export default function Thread({ casts, currentHash }: any): JSX.Element {
     ));
   }
 
-  return <div>{renderCasts(castsWithResponses, true)}</div>;
+  return <div className="w-1/3">{renderCasts(castsWithResponses, true)}</div>;
 }

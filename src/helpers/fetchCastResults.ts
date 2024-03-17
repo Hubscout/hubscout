@@ -29,8 +29,15 @@ export async function getCastResultsInfo(casts: any): Promise<any[]> {
   ) {
     return [];
   }
-
-  let cast_results = castsData.result.casts as any[];
+  let cast_results = castsData.result.casts.map((cast) => {
+    return {
+      ...cast,
+      avatar: cast.author.pfp_url,
+      username: cast.author.username,
+      displayName: cast.author.display_name,
+      embeds: cast.embeds ?? [],
+    };
+  }) as any[];
 
   let parentHashes = Array.from(
     new Set(
@@ -55,10 +62,6 @@ export async function getCastResultsInfo(casts: any): Promise<any[]> {
     } else {
       cast.parent = null;
     }
-    cast.avatar = cast.author.pfp_url;
-    cast.username = cast.author.username;
-    cast.displayName = cast.author.display_name;
-    cast.embeds = cast.embeds ?? [];
   });
 
   return cast_results;
@@ -108,6 +111,7 @@ export async function fetchCastResults(
       input: finishedQuery,
       dimensions: 512,
     });
+    console.log(channel);
     queryEmbedding = embedding.data[0].embedding;
     let { data, error } = await supabase.rpc("hybrid_search", {
       query_text: finishedQuery,
