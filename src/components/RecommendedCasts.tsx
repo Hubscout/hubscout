@@ -12,7 +12,6 @@ const RecommendedCasts = ({ hash }: { hash: string }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("fetching recommended casts");
       setLoading(true); // Start loading
       try {
         const data = await fetchRecommendedCasts(hash.slice(2), 5);

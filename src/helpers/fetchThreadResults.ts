@@ -16,7 +16,6 @@ export const maxDuration = 10; // This function can run for a maximum of 5 min
 export const revalidate = 60 * 30; // 30 minutes
 
 export async function fetchThreadInfo(hash: string) {
-  let start = Date.now();
   let cast = await neynar.lookUpCastByHashOrWarpcastUrl(
     hash,
     "hash",
@@ -39,8 +38,7 @@ export async function fetchThreadInfo(hash: string) {
     cast.embeds = cast.embeds ?? [];
     return cast;
   });
-  let end = Date.now();
-  console.log("fetchThreadInfo", end - start, "ms");
+
   return threadCasts;
 }
 
@@ -77,8 +75,7 @@ export async function fetchThreadResults(
     };
   } catch (e) {
     //still log the error
-    const endTimeRequest = Date.now();
-    const totalDuration = endTimeRequest - startTimeRequest;
+
     console.log("error in fetchcast", e);
     return { thread: [] };
   }

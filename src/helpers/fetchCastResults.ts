@@ -29,7 +29,6 @@ export async function getCastResultsInfo(casts: any): Promise<any[]> {
   ) {
     return [];
   }
-  console.log("castData", castsData.result.casts.length, cast_ids.length);
 
   let cast_results = castsData.result.casts as any[];
 
@@ -61,7 +60,6 @@ export async function getCastResultsInfo(casts: any): Promise<any[]> {
     cast.displayName = cast.author.display_name;
     cast.embeds = cast.embeds ?? [];
   });
-  console.log("cast_results", cast_results.length, cast_results[0]);
 
   return cast_results;
 }
@@ -218,7 +216,6 @@ export async function _fetchResultForHash(hash_partial: string) {
   if (cast?.hash && threadHash.toLowerCase() !== cast?.hash.toLowerCase()) {
     let attempt = 0;
     const maxAttempts = 3;
-    console.log("cast info", cast, threadHash);
     while (attempt < maxAttempts) {
       try {
         cast.parent = formatNeynarCast(
