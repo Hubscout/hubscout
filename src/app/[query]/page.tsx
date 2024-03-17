@@ -2,14 +2,12 @@ import { fetchCastResults } from "@/helpers/fetchCastResults";
 import { SearchBar } from "@/components/SearchBar";
 import { Title } from "@/components/Title";
 import { Cast } from "@/components/Cast";
-import Filter from "@/components/TimeFilter";
+
 import TimeFilter from "@/components/TimeFilter";
 import ChannelFilter from "@/components/ChannelFilter";
-import useSWR from "swr";
+
 import UsernameFilter from "@/components/UsernameFilter";
-import { useProfile } from "@farcaster/auth-kit";
-import FarcasterProfileInfo from "../FarcasterProfileInfo";
-import { parse } from "path";
+
 import Feedback from "@/components/Feedback";
 
 export const revalidate = 60 * 30; // 5 minutes
@@ -44,13 +42,15 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <div
-      className="w-screen min-h-screen p-2 col-fs-c bg-white"
+      className="w-screen min-h-screen p-2 md:p-6 bg-white flex flex-col items-center"
       style={{ paddingTop: "2vw" }}
     >
-      <Feedback requestId={requestId} />
-      <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
+      <div
+        className="w-full flex flex-col gap-2 items-center"
+        style={{ maxWidth: 540 }}
+      >
         <SearchBar initValue={query} time={time} channel={channel} fid={fid} />
-        <div className="flex w-full space-x-3">
+        <div className="flex flex-wrap justify-center gap-1 md:gap-2 md:flex-nowrap">
           <TimeFilter
             query={params.query}
             time={time}
@@ -71,11 +71,12 @@ export default async function Page({ params, searchParams }: PageProps) {
           />
           {/* <Contains query={params.query} contains={contains} time={time} /> */}
         </div>
+        <Feedback requestId={requestId} />
 
         {casts && casts.length ? (
           casts.map((c, i) => <Cast key={i + c.hash} {...c} />)
         ) : (
-          <div className="h-screen flex-1 flex w-full justify-center items-center">
+          <div className="flex-1 flex w-full justify-center items-center">
             <p className="text-sm text-center">
               No casts found, try reducing the filters or trying something
               different!
@@ -93,5 +94,3 @@ interface PageProps {
   };
   searchParams?: { [key: string]: string | string[] | undefined };
 }
-
-// Remove the 'generateMetadata' function if it's not needed

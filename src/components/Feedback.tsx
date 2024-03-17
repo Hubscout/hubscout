@@ -3,11 +3,6 @@
 import supabase from "@/lib/supabase";
 import { useState } from "react";
 
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/PBM4209pap5
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 export default function Feedback({ requestId }: { requestId: string }) {
   const [feedbackGiven, setFeedbackGiven] = useState(false);
 
@@ -20,42 +15,32 @@ export default function Feedback({ requestId }: { requestId: string }) {
     }
   };
 
-  // Content of the first snippet...
-
   // Place for the feedback form based on your design choices
   if (!feedbackGiven) {
     return (
-      <div className="fixed right-4">
-        <div className="w-full max-w-sm rounded-lg border-2 border-slate-100 p-6 hover:border-slate-200">
-          <h2 className="text-sm font-semibold">Was this search helpful?</h2>
-          <div className="flex items-center gap-4 mt-4">
-            <button
-              onClick={() => giveFeedback(1)} // Assuming 1 for positive feedback
-              className="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100 transition-colors"
-            >
-              <ThumbsUpIcon className="w-4 h-4" />
-              Yes
-            </button>
-            <button
-              onClick={() => giveFeedback(0)} // Assuming 0 for negative feedback
-              className="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100 transition-colors"
-            >
-              <ThumbsDownIcon className="w-4 h-4" />
-              No
-            </button>
-          </div>
+      <div className="flex flex-col items-center">
+        {/* Adjusted for flex layout */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => giveFeedback(1)}
+            className="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100 transition-opacity p-2"
+          >
+            <ThumbsUpIcon className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => giveFeedback(0)}
+            className="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100 transition-opacity p-2"
+          >
+            <ThumbsDownIcon className="w-6 h-6" />
+          </button>
         </div>
       </div>
     );
   } else {
     return (
-      <div className="fixed right-4">
-        <div className="w-full max-w-sm rounded-lg border-2 border-slate-100 justify-center flex p-6">
-          {" "}
-          <p className="text-md font-semibold">
-            Thank you for your feedback!
-          </p>{" "}
-        </div>
+      <div className="flex flex-col items-center">
+        {/* Adjusted for flex layout */}
+        <p className="text-md font-semibold">Thank you for your feedback!</p>
       </div>
     );
   }
