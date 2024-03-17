@@ -111,7 +111,7 @@ export function CastSnippet({
           onClick={(e) => {
             e.stopPropagation();
           }}
-          href={`https://warpcast.com/${username}/${hash.slice(0, 8)}`}
+          href={`https://warpcast.com/${username}/${hash?.slice(0, 8)}`}
           className="absolute bottom-0 right-0" // Applied absolute positioning classes
         >
           <WarpcastIcon />
