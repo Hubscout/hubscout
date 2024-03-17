@@ -37,7 +37,7 @@ export function CastSnippet({
 
     return () => clearInterval(timer);
   }, [timestamp]);
-  console.log("embeds", embeds);
+
   // Filter embeds to include only those whose URL ends with one of the image extensions
   let finishedEmbeds = embeds
     ? embeds.filter((embed) => {
