@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-
 "use client";
 import { getRelativeTime } from "@/helpers/getRelativeTime";
 import { generateFallbackAvatar, imageList, videoList } from "@/helpers/utils";
 import "react-farcaster-embed/dist/styles.css"; // include default styles or write your own
 import { WarpcastIcon } from "./icons";
 import { useEffect, useState } from "react";
+import Video from "./Video";
 
 export function CastSnippet({
   avatar,
@@ -37,7 +37,7 @@ export function CastSnippet({
 
     return () => clearInterval(timer);
   }, [timestamp]);
-
+  console.log("embeds", embeds);
   // Filter embeds to include only those whose URL ends with one of the image extensions
   let finishedEmbeds = embeds
     ? embeds.filter((embed) => {
@@ -93,15 +93,12 @@ export function CastSnippet({
         </span>
         {embed && embedType === "image" ? (
           <img
-            src={finishedEmbeds[0].url} // Use the first image URL
+            src={embed.url} // Use the first image URL
             alt="Embedded image"
             className="max-w-full max-h-72 rounded-lg " // Adjust styling as needed
           />
         ) : embed ? (
-          <video
-            src={finishedEmbeds[0].url} // Use the first image URL
-            className="max-w-full max-h-72 rounded-lg " // Adjust styling as needed
-          />
+          <Video videoUrl={embed.url} />
         ) : null}
         <p
           className="text-sm font-medium font-slate-700 opacity-75 break-words w-full p-2"

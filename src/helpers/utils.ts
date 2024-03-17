@@ -12,7 +12,7 @@ export const getUserId = () => {
 
 export const imageList = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
 
-export const videoList = [".mp4", ".webm", ".ogg", ".mov"];
+export const videoList = [".mp4", ".webm", ".ogg", ".mov", ".m3u8"];
 
 export const formatNeynarCast = (cast: any) => {
   return {
