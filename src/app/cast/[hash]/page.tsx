@@ -13,7 +13,7 @@ export default async function Page({ params }: PageProps) {
   return (
     <div className="w-screen min-h-screen p-2 bg-white">
       {/* Container for thread and suggested casts */}
-      <div className="w-full space-x-4 justify-center flex flex-row">
+      <div className="w-full lg:space-x-4 lg:justify-center  sm:items-center lg:items-start  flex sm:flex-col lg:flex-row">
         <Thread casts={thread} currentHash={hash} />
         <RecommendedCasts hash={hash} />
       </div>
