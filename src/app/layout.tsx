@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import "@/styles/index.scss";
 import { RouteChangeListener } from "./route-change-listener";
 import FarcasterAuthComponent from "./FarcasterAuthComponent";
+import { Title } from "@/components/Title";
 
 export const metadata: Metadata = {
   title: "Hubscout",
@@ -23,8 +24,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <FarcasterAuthComponent>
-          <WithProgressBar>{children}</WithProgressBar>
+          <WithProgressBar>
+            <Title />
+
+            {children}
+          </WithProgressBar>
           <Analytics />
+
           <RouteChangeListener />
         </FarcasterAuthComponent>
       </body>

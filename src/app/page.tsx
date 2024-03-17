@@ -25,12 +25,8 @@ export default async function Page() {
         content="https://www.hubscout.xyz/api/frame"
       />
 
-      <div
-        className="w-screen h-screen p-2 col-fs-c bg-white"
-        style={{ paddingTop: "5vw" }}
-      >
+      <div className="w-screen h-screen p-2 col-fs-c bg-white">
         <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
-          <Title />
           <SearchBar initValue="" />
           <Suggestions />
           <APIDisclaimer />

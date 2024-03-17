@@ -45,11 +45,10 @@ export default async function Page({ params, searchParams }: PageProps) {
   return (
     <div
       className="w-screen min-h-screen p-2 col-fs-c bg-white"
-      style={{ paddingTop: "5vw" }}
+      style={{ paddingTop: "2vw" }}
     >
       <Feedback requestId={requestId} />
       <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
-        <Title />
         <SearchBar initValue={query} time={time} channel={channel} fid={fid} />
         <div className="flex w-full space-x-3">
           <TimeFilter

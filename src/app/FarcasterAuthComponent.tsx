@@ -18,9 +18,9 @@ export default function FarcasterAuthComponent({
 
   return (
     <AuthKitProvider config={config}>
-      <div className={`fixed top-4 right-4 bg-purple-500`}>
+      {/* <div className={`fixed top-4 right-4 bg-purple-500`}>
         <FarcasterSignIn />
-      </div>
+      </div> */}
       {children}
     </AuthKitProvider>
   );

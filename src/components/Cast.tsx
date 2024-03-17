@@ -1,10 +1,9 @@
-import type {
-  User,
-  Cast as CastProps,
-} from "@neynar/nodejs-sdk/build/neynar-api/v1";
+"use client";
+import type { Cast as CastProps } from "@neynar/nodejs-sdk/build/neynar-api/v1";
 import { CastSnippet } from "@/components/CastSnippet";
 import Link from "next/link";
-
+import { sendEventToAmplitude } from "@/lib/amplitude";
+import { getUserId } from "@/helpers/utils";
 export function Cast({ parent, ...cast }: CastWithPossibleParent) {
   // if there is a parent, we want to show that first
   const first_cast: CastWithPossibleParent = parent ?? cast;
@@ -24,6 +23,7 @@ export function Cast({ parent, ...cast }: CastWithPossibleParent) {
     text: first_cast.text,
     showRail: !!second_cast,
     embeds: first_cast.embeds,
+    hash: first_cast.hash,
   };
 
   const secondProps = second_cast && {
@@ -33,12 +33,24 @@ export function Cast({ parent, ...cast }: CastWithPossibleParent) {
     timestamp: second_cast.timestamp,
     text: second_cast.text,
     embeds: second_cast.embeds,
+    hash: second_cast.hash,
   };
 
   return (
     <Link
-      target="_blank"
-      href={`https://warpcast.com/${first_author.username}/${first_cast.hash.slice(0, 8)}`}
+      // target="_blank"
+      onClick={async () => {
+        try {
+          const userId = getUserId();
+          await sendEventToAmplitude(userId, "click_query_cast", {
+            hash: first_cast.hash,
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }}
+      href={`/cast/${first_cast.hash}`}
+      // href={`https://warpcast.com/${first_author.username}/${first_cast.hash.slice(0, 8)}`}
       className="border-2 border-slate-100 cursor-pointer hover:border-slate-200 w-full p-3 rounded-xl"
     >
       {first_cast && <CastSnippet {...firstProps} />}

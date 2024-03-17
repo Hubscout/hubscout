@@ -14,6 +14,58 @@ export interface SearchResponse {
 
 export const maxDuration = 10; // This function can run for a maximum of 5 min
 export const revalidate = 60 * 30; // 30 minutes
+
+export async function getCastResultsInfo(casts: any): Promise<any[]> {
+  let cast_ids = casts.map((d: any) =>
+    d.hash ? d.hash.replace("\\", "0") : null
+  );
+  if (!cast_ids || !cast_ids.length) {
+    return [];
+  }
+  const castsData = await neynar.fetchBulkCasts(cast_ids);
+  if (
+    !castsData || !castsData.result || !castsData.result.casts ||
+    !castsData.result.casts.length
+  ) {
+    return [];
+  }
+  console.log("castData", castsData.result.casts.length, cast_ids.length);
+
+  let cast_results = castsData.result.casts as any[];
+
+  let parentHashes = Array.from(
+    new Set(
+      cast_results.map((c) =>
+        c.thread_hash && c.thread_hash !== c.hash ? c.thread_hash : null
+      ).filter(Boolean),
+    ),
+  );
+
+  if (!parentHashes.length) return cast_results;
+
+  let parentCastsData = await neynar.fetchBulkCasts(parentHashes);
+  let parentCasts = parentCastsData.result.casts as any[];
+  let parentCastsMap = new Map(parentCasts.map((c) => [c.hash, c]));
+
+  cast_results.forEach((cast) => {
+    if (
+      cast.thread_hash && parentCastsMap.has(cast.thread_hash) &&
+      cast.thread_hash !== cast.hash
+    ) {
+      cast.parent = parentCastsMap.get(cast.thread_hash);
+    } else {
+      cast.parent = null;
+    }
+    cast.avatar = cast.author.pfp_url;
+    cast.username = cast.author.username;
+    cast.displayName = cast.author.display_name;
+    cast.embeds = cast.embeds ?? [];
+  });
+  console.log("cast_results", cast_results.length, cast_results[0]);
+
+  return cast_results;
+}
+
 export async function fetchCastResults(
   query: string,
   timeQuery?: "day" | "week" | "month" | "three_months" | "year" | null,
@@ -59,7 +111,6 @@ export async function fetchCastResults(
       dimensions: 512,
     });
     queryEmbedding = embedding.data[0].embedding;
-
     let { data, error } = await supabase.rpc("hybrid_search", {
       query_text: finishedQuery,
       query_embedding: queryEmbedding,
@@ -78,43 +129,10 @@ export async function fetchCastResults(
 
     if (!data || !data.length) return { casts: [], requestId: requestId };
 
-    let cast_ids = data.map((d: any) =>
-      d.hash ? d.hash.replace("\\", "0") : null
-    );
-
-    const castsData = await neynar.fetchBulkCasts(cast_ids);
-    if (
-      !castsData || !castsData.result || !castsData.result.casts ||
-      !castsData.result.casts.length
-    ) {
-      return { casts: [], requestId: requestId };
-    }
-
-    let cast_results = castsData.result.casts as any[];
-
-    let parentHashes = Array.from(
-      new Set(
-        cast_results.map((c) =>
-          c.thread_hash && c.thread_hash !== c.hash ? c.thread_hash : null
-        ).filter(Boolean),
-      ),
-    );
-
-    let parentCastsData = await neynar.fetchBulkCasts(parentHashes);
-    let parentCasts = parentCastsData.result.casts as any[];
-    let parentCastsMap = new Map(parentCasts.map((c) => [c.hash, c]));
-
-    cast_results.forEach((cast) => {
-      if (cast.thread_hash && parentCastsMap.has(cast.thread_hash)) {
-        cast.parent = parentCastsMap.get(cast.thread_hash);
-      } else {
-        cast.parent = null;
-      }
-    });
+    const cast_results = await getCastResultsInfo(data);
 
     const endTimeRequest = Date.now();
     const totalDuration = endTimeRequest - startTimeRequest;
-    console.log("Total duration", totalDuration, "ms");
     try {
       const addRequest = await supabase.from("requests").insert(
         {
@@ -194,12 +212,13 @@ export async function _fetchResultForHash(hash_partial: string) {
 
   // grab the thread hash
   const threadHash = cast?.threadHash;
+  if (!threadHash) return cast;
 
   // if there's a parent_hash, grab the parent
-  if (cast?.hash && threadHash !== cast?.hash) {
+  if (cast?.hash && threadHash.toLowerCase() !== cast?.hash.toLowerCase()) {
     let attempt = 0;
     const maxAttempts = 3;
-
+    console.log("cast info", cast, threadHash);
     while (attempt < maxAttempts) {
       try {
         cast.parent = formatNeynarCast(
