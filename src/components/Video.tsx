@@ -12,9 +12,6 @@ const Video = ({ videoUrl }: { videoUrl: string }) => {
       hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(video as any);
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        if (video) video.play();
-      });
     }
 
     return () => {

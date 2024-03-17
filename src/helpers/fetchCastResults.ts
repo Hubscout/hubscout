@@ -4,7 +4,7 @@ import { subDays, subMonths, subWeeks, subYears } from "date-fns";
 
 import supabase from "@/lib/supabase";
 import OpenAI from "openai";
-import { formatNeynarCast } from "./utils";
+import { formatNeynarCast, generateEmbedding } from "./utils";
 import { randomUUID } from "crypto";
 
 export interface SearchResponse {
@@ -105,14 +105,7 @@ export async function fetchCastResults(
   let finishedQuery = decodeURIComponent(query);
   let queryEmbedding = null;
   try {
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY as string });
-    const embedding = await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: finishedQuery,
-      dimensions: 512,
-    });
-    console.log(channel);
-    queryEmbedding = embedding.data[0].embedding;
+    queryEmbedding = await generateEmbedding(finishedQuery);
     let { data, error } = await supabase.rpc("hybrid_search", {
       query_text: finishedQuery,
       query_embedding: queryEmbedding,

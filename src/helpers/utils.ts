@@ -1,3 +1,4 @@
+import OpenAI from "openai";
 import { v4 } from "uuid";
 
 export const getUserId = () => {
@@ -20,6 +21,18 @@ export const formatNeynarCast = (cast: any) => {
     display_name: cast.author?.displayName,
     username: cast.author?.username,
   };
+};
+
+export const generateEmbedding = async (input: string) => {
+  if (!input) return null;
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY as string });
+  const embedding = await openai.embeddings.create({
+    model: "text-embedding-3-small",
+    input: input.replace(/(\r\n|\n|\r)/gm, ""),
+    dimensions: 512,
+  });
+
+  return embedding.data[0].embedding;
 };
 
 export function generateFallbackAvatar(username: any) {
