@@ -9,6 +9,10 @@ import { headers } from "next/headers";
 export default async function Page() {
   return (
     <>
+      <meta property="og:image" content="https://www.hubscout.xyz/api/image" />
+      <meta property="og:title" content="Hubscout" />
+      <meta property="og:description" content="Semantic search for Farcaster" />
+
       <div className="w-screen h-screen p-2 col-fs-c bg-white">
         <div className="w-full col gap-2" style={{ maxWidth: 540 }}>
           <SearchBar initValue="" />
