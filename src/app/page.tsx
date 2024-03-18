@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 export default async function Page() {
   return (
     <>
-      <meta property="og:image" content="https://www.hubscout.xyz/api/image" />
+      <meta property="og:image" content="icon.ico" />
       <meta property="og:title" content="Hubscout" />
       <meta property="og:description" content="Semantic search for Farcaster" />
 
