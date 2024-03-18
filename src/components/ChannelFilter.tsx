@@ -17,6 +17,13 @@ interface TimeOption {
 const defaultChannelOptions: TimeOption[] = [
   { id: "Any Channel", parent_url: null, image_url: null },
   {
+    id: "farcaster",
+    image_url:
+      "https://ipfs.decentralized-content.com/ipfs/bafkreialf5usxssf2eu3e5ct37zzdd553d7lg7oywvdszmrg5p2zpkta7u",
+    parent_url:
+      "chain://eip155:7777777/erc721:0x4f86113fc3e9783cf3ec9a552cbb566716a57628",
+  },
+  {
     id: "farcon",
     parent_url:
       "chain://eip155:1/erc721:0x2A9EA02E4c2dcd56Ba20628Fe1bd46bAe2C62746",
