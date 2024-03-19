@@ -230,4 +230,4 @@ export async function _fetchResultForHash(hash_partial: string) {
   return cast;
 }
 
-const nResults = 80;
+const nResults = 50;
